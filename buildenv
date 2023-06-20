@@ -1,0 +1,42 @@
+export ZOPEN_TARBALL_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-src.tgz"
+
+rm suite3270-4.2ga10-src
+ln -s suite3270-4.2  suite3270-4.2ga10-src
+export ZOPEN_NAME=c3270
+export ZOPEN_TARBALL_DEPS="curl zoslib make ncurses coreutils"
+export ZOPEN_TYPE="TARBALL"
+export ZOPEN_COMP=CLANG
+#export ZOPEN_SRC_DIR=c3270
+export ZOPEN_MAKE_MINIMAL=yes
+export ZOPEN_INSTALL_MINIMAL=yes
+export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270"
+
+zopen_check_results()
+{
+  dir="$1"
+  pfx="$2"
+  chk="$1/$2_check.log"
+
+  # Echo the following information to gauge build health
+  echo "actualFailures:0"
+  echo "totalTests:1"
+  echo "expectedFailures:0"
+  echo "expectedTotalTests:1"
+}
+
+zopen_append_to_env()
+{
+  # echo envars outside of PATH, MANPATH, LIBPATH
+}
+
+zopen_append_to_setup()
+{
+  # echo commands that will run when installing via setup.sh
+}
+
+zopen_get_version()
+{
+  # Modify to echo the version of your tool/library
+  # Rather than hardcoding the version, obtain the version by running the tool/library
+  echo "1.0.0"
+}
