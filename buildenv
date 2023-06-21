@@ -3,13 +3,13 @@ export ZOPEN_TARBALL_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-s
 rm suite3270-4.2ga10-src
 ln -s suite3270-4.2  suite3270-4.2ga10-src
 export ZOPEN_NAME=c3270
-export ZOPEN_TARBALL_DEPS="curl zoslib make ncurses coreutils"
+export ZOPEN_TARBALL_DEPS="curl zoslib make ncurses coreutils openssl"
 export ZOPEN_TYPE="TARBALL"
 export ZOPEN_COMP=CLANG
 #export ZOPEN_SRC_DIR=c3270
 export ZOPEN_MAKE_MINIMAL=yes
 export ZOPEN_INSTALL_MINIMAL=yes
-export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270"
+export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-x3270if --enable-s3270 --with-ssl=yes"
 
 zopen_check_results()
 {
