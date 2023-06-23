@@ -1,3 +1,17 @@
+diff --git a/c3270/Makefile.obj.in b/c3270/Makefile.obj.in
+index f52e0e9..cb8c113 100644
+--- a/c3270/Makefile.obj.in
++++ b/c3270/Makefile.obj.in
+@@ -73,6 +73,9 @@ mkfb: mkfb.c
+ 
+ keypad.o: compiled_keypad.h
+ 
++mkkeypad: mkkeypad.o
++	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) @LIBS@
++
+ compiled_keypad.h: keypad.full keypad.labels keypad.map keypad.outline keypad.callbacks mkkeypad
+ 	./mkkeypad -I$(TOP)/Common/c3270 >$@
+ 
 diff --git a/c3270/configure b/c3270/configure
 index a95b8d0..9e7bc94 100755
 --- a/c3270/configure
@@ -11,3 +25,30 @@ index a95b8d0..9e7bc94 100755
    if test -z "$ac_lib"; then
      ac_res="none required"
    else
+diff --git a/lib/3270/Makefile.obj.in b/lib/3270/Makefile.obj.in
+index 65ace7a..4e327d1 100644
+--- a/lib/3270/Makefile.obj.in
++++ b/lib/3270/Makefile.obj.in
+@@ -56,6 +56,9 @@ $(LIB3270): $(OBJS) $(INCS)
+ 
+ favicon.o: favicon.c
+ 
++mkicon: mkicon.o
++	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) @LIBS@
++
+ favicon.c: favicon.ico mkicon
+ 	./mkicon $< >$@
+ 
+diff --git a/s3270/Makefile.obj.in b/s3270/Makefile.obj.in
+index 08d17fd..5556d45 100644
+--- a/s3270/Makefile.obj.in
++++ b/s3270/Makefile.obj.in
+@@ -69,7 +69,7 @@ fallbacks.c: mkfb $(FALLBACKS)
+ 	./mkfb -c -o $@ $(filter-out mkfb,$^)
+ 
+ mkfb: mkfb.c
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(filter %.c,$^)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(filter %.c,$^) $(LIBS)
+ 
+ s3270: $(OBJS1) $(DEP3270) $(DEP32XX) $(DEP3270STUBS)
+ 	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LD3270) $(LD32XX) $(LD3270STUBS) $(LIBS)
