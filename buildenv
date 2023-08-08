@@ -11,6 +11,7 @@ export ZOPEN_MAKE_MINIMAL=yes
 export ZOPEN_INSTALL_MINIMAL=yes
 export ZOPEN_INSTALL_OPTS="-j\$ZOPEN_NUM_JOBS install install.man"
 export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-s3270 --enable-x3270if --with-ssl=yes"
+export ZOPEN_RUNTIME_DEPS="ncurses" 
 
 zopen_check_results()
 {
