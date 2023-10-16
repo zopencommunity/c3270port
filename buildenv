@@ -42,3 +42,9 @@ zopen_get_version()
   # Rather than hardcoding the version, obtain the version by running the tool/library
   echo "1.0.0"
 }
+
+zopen_append_to_zoslib_env() {
+ cat <<EOF
+ASCII_TERMINFO|set|PROJECT_ROOT/../../ncurses/ncurses/share/terminfo/
+EOF
+}
