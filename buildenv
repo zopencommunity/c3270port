@@ -43,7 +43,7 @@ zopen_append_to_setup()
 
 zopen_get_version()
 {
-  echo "$C3270_VERSION"
+  echo "$C3270_SVERSION"
 }
 
 zopen_append_to_zoslib_env() {
