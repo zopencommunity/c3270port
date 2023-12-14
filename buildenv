@@ -1,10 +1,15 @@
-export ZOPEN_TARBALL_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-src.tgz"
+# bump: c3270-version /C3270_VERSION="(.*)"/ https://sourceforge.net/projects/x3270/files/x3270/|re:/Click.to.enter.([\d.]+g?a?\d+)"/
+C3270_VERSION="4.2ga10"
+C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'g' -f 1)"
 
-rm suite3270-4.2ga10-src
-ln -s suite3270-4.2  suite3270-4.2ga10-src
+# export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-src.tgz"
+export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3270_VERSION}/suite3270-${C3270_VERSION}-src.tgz"
+
+rm "suite3270-${C3270_VERSION}-src"
+ln -s "suite3270-${C3270_SVERSION}"  "suite3270-${C3270_VERSION}-src"
+export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
-export ZOPEN_TARBALL_DEPS="curl zoslib make ncurses coreutils openssl"
-export ZOPEN_TYPE="TARBALL"
+export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl"
 export ZOPEN_COMP=CLANG
 #export ZOPEN_SRC_DIR=c3270
 export ZOPEN_MAKE_MINIMAL=yes
@@ -38,9 +43,7 @@ zopen_append_to_setup()
 
 zopen_get_version()
 {
-  # Modify to echo the version of your tool/library
-  # Rather than hardcoding the version, obtain the version by running the tool/library
-  echo "1.0.0"
+  echo "$C3270_SVERSION"
 }
 
 zopen_append_to_zoslib_env() {
