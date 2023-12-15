@@ -1,5 +1,5 @@
 # bump: c3270-version /C3270_VERSION="(.*)"/ https://sourceforge.net/projects/x3270/files/x3270/|re:/Click.to.enter.([\d.]+g?a?\d+)"/
-C3270_VERSION="4.2ga10"
+C3270_VERSION="4.3ga4"
 C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'g' -f 1)"
 
 # export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-src.tgz"
