@@ -1,0 +1,14 @@
+diff --git a/c3270/Makefile.obj.in b/c3270/Makefile.obj.in
+index f52e0e9..cb8c113 100644
+--- a/c3270/Makefile.obj.in
++++ b/c3270/Makefile.obj.in
+@@ -73,6 +73,9 @@ mkfb: mkfb.c
+ 
+ keypad.o: compiled_keypad.h
+ 
++mkkeypad: mkkeypad.o
++	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) @LIBS@
++
+ compiled_keypad.h: keypad.full keypad.labels keypad.map keypad.outline keypad.callbacks mkkeypad
+ 	./mkkeypad -I$(TOP)/Common/c3270 >$@
+ 

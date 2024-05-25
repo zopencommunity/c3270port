@@ -1,0 +1,13 @@
+diff --git a/c3270/configure b/c3270/configure
+index a95b8d0..9e7bc94 100755
+--- a/c3270/configure
++++ b/c3270/configure
+@@ -4176,7 +4176,7 @@ return wadd_wch ();
+   return 0;
+ }
+ _ACEOF
+-for ac_lib in '' ncursesw ncurses curses; do
++for ac_lib in '' ncursesw ncurses; do
+   if test -z "$ac_lib"; then
+     ac_res="none required"
+   else
