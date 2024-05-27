@@ -1,8 +1,8 @@
 diff --git a/lib/3270/Makefile.obj.in b/lib/3270/Makefile.obj.in
-index 65ace7a..4e327d1 100644
+index 8c643b7..4476f47 100644
 --- a/lib/3270/Makefile.obj.in
 +++ b/lib/3270/Makefile.obj.in
-@@ -56,6 +56,9 @@ $(LIB3270): $(OBJS) $(INCS)
+@@ -60,6 +60,9 @@ $(LIB3270): $(OBJS) $(INCS)
  
  favicon.o: favicon.c
  

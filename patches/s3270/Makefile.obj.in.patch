@@ -1,13 +1,13 @@
 diff --git a/s3270/Makefile.obj.in b/s3270/Makefile.obj.in
-index 08d17fd..5556d45 100644
+index 0fe01cd..dfa563b 100644
 --- a/s3270/Makefile.obj.in
 +++ b/s3270/Makefile.obj.in
-@@ -69,7 +69,7 @@ fallbacks.c: mkfb $(FALLBACKS)
+@@ -73,7 +73,7 @@ fallbacks.c: mkfb $(FALLBACKS)
  	./mkfb -c -o $@ $(filter-out mkfb,$^)
  
  mkfb: mkfb.c
--	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(filter %.c,$^)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(filter %.c,$^) $(LIBS)
+-	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
++	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LIBS)
  
  s3270: $(OBJS1) $(DEP3270) $(DEP32XX) $(DEP3270STUBS)
  	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LD3270) $(LD32XX) $(LD3270STUBS) $(LIBS)

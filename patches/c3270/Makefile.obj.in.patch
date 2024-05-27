@@ -1,14 +1,16 @@
 diff --git a/c3270/Makefile.obj.in b/c3270/Makefile.obj.in
-index f52e0e9..cb8c113 100644
+index e640ffb..b1a2d16 100644
 --- a/c3270/Makefile.obj.in
 +++ b/c3270/Makefile.obj.in
-@@ -73,6 +73,9 @@ mkfb: mkfb.c
+@@ -75,7 +75,10 @@ fallbacks.c: mkfb $(FALLBACKS)
+ mkfb: mkfb.c
+ 	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
  
- keypad.o: compiled_keypad.h
- 
+-mkkeypad: mkkeypad.c
 +mkkeypad: mkkeypad.o
 +	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) @LIBS@
 +
- compiled_keypad.h: keypad.full keypad.labels keypad.map keypad.outline keypad.callbacks mkkeypad
- 	./mkkeypad -I$(TOP)/Common/c3270 >$@
++mkkeypad.o: mkkeypad.c
+ 	$(BUILDCC) $(XCPPFLAGS) -o $@ $<
  
+ keypad.o: compiled_keypad.h
