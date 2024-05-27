@@ -7,7 +7,7 @@ index 0fe01cd..dfa563b 100644
  
  mkfb: mkfb.c
 -	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
-+	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LIBS)
++	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
  
  s3270: $(OBJS1) $(DEP3270) $(DEP32XX) $(DEP3270STUBS)
  	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LD3270) $(LD32XX) $(LD3270STUBS) $(LIBS)

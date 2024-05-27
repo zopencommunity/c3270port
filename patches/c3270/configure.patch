@@ -1,8 +1,17 @@
 diff --git a/c3270/configure b/c3270/configure
-index adccf51..aaa5059 100755
+index adccf51..6c672a6 100755
 --- a/c3270/configure
 +++ b/c3270/configure
 @@ -3862,7 +3862,7 @@ return newterm ();
+   return 0;
+ }
+ _ACEOF
+-for ac_lib in '' ncursesw ncurses curses
++for ac_lib in '' ncursesw ncurses
+ do
+   if test -z "$ac_lib"; then
+     ac_res="none required"
+@@ -4246,7 +4246,7 @@ return wadd_wch ();
    return 0;
  }
  _ACEOF
