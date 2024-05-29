@@ -7,7 +7,7 @@ index e640ffb..95d369c 100644
  
  mkfb: mkfb.c
 -	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
-+	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $LIBS
++	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
  
  mkkeypad: mkkeypad.c
  	$(BUILDCC) $(XCPPFLAGS) -o $@ $<
@@ -15,7 +15,7 @@ index e640ffb..95d369c 100644
  keypad.o: compiled_keypad.h
  
 +mkkeypad: mkkeypad.o
-+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $LIBS
++	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $(LIBS)
 +
  compiled_keypad.h: keypad.full keypad.labels keypad.map keypad.outline keypad.callbacks mkkeypad
  	./mkkeypad -I$(TOP)/Common/c3270 >$@

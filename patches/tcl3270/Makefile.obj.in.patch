@@ -7,7 +7,7 @@ index d61e877..97d8c31 100644
  
  mkfb: mkfb.c
 -	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
-+	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)$
++	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
  
  tcl3270: $(OBJS1)
  	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LIBS)

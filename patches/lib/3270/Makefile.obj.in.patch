@@ -7,7 +7,7 @@ index 8c643b7..4476f47 100644
  favicon.o: favicon.c
  
 +mkicon: mkicon.o
-+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) @LIBS@
++	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $(LIBS)
 +
  favicon.c: favicon.ico mkicon
  	./mkicon $< >$@
