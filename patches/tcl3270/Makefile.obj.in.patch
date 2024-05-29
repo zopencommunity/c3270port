@@ -1,0 +1,13 @@
+diff --git a/tcl3270/Makefile.obj.in b/tcl3270/Makefile.obj.in
+index d61e877..97d8c31 100644
+--- a/tcl3270/Makefile.obj.in
++++ b/tcl3270/Makefile.obj.in
+@@ -74,7 +74,7 @@ fallbacks.c: mkfb $(FALLBACKS)
+ 	./mkfb -c -o $@ $(filter-out mkfb,$^)
+ 
+ mkfb: mkfb.c
+-	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
++	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)$
+ 
+ tcl3270: $(OBJS1)
+ 	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LIBS)
