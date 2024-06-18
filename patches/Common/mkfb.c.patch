@@ -1,8 +1,37 @@
 diff --git a/Common/mkfb.c b/Common/mkfb.c
-index 3b2f047..dca201b 100644
+index 3b2f047..52e4c21 100644
 --- a/Common/mkfb.c
 +++ b/Common/mkfb.c
-@@ -103,23 +103,24 @@ usage(void)
+@@ -45,6 +45,28 @@
+ # include <errno.h>
+ #endif /*]*/
+ 
++#ifdef __MVS__
++#define _AE_BIMODAL 1
++#include <_Ccsid.h>
++#include <fcntl.h>
++#include <sys/stat.h>
++static int chgfdccsid(int fd, unsigned short ccsid) 
++{
++  attrib_t attr;
++  memset(&attr, 0, sizeof(attr));
++  attr.att_filetagchg = 1;
++  attr.att_filetag.ft_ccsid = ccsid;
++  if (ccsid != FT_BINARY) {
++    attr.att_filetag.ft_txtflag = 1;
++  }
++  return __fchattr(fd, &attr, sizeof(attr));
++}
++static int disableautocvt(int fd) {
++  struct f_cnvrt req = {SETCVTOFF, 0, 0};
++  return fcntl(fd, F_CONTROL_CVT, &req);
++}
++#endif
++
+ #define BUFSZ	1024		/* input line buffer size */
+ #define ARRSZ	8192		/* output array size */
+ #define SSSZ	10		/* maximum nested ifdef */
+@@ -103,23 +125,24 @@ usage(void)
  }
  
  /*
@@ -30,7 +59,7 @@ index 3b2f047..dca201b 100644
      n = _tempnam(NULL, "mkfb");
      if (n == NULL) {
  	fprintf(stderr, "_tempnam failed.\n");
-@@ -131,6 +132,19 @@ mkfb_tmpfile(void)
+@@ -131,6 +154,25 @@ mkfb_tmpfile(void)
  		strerror(errno));
  	exit(1);
      }
@@ -46,7 +75,31 @@ index 3b2f047..dca201b 100644
 +		strerror(errno));
 +	exit(1);
 +    }
++    int fd = fileno(f);
++    if (chgfdccsid(fd, 819)) {
++    	fprintf(stderr, "tempnam chgfdccsid(\"%s\") failed: %s\n", n, 
++		strerror(errno));
++	exit(1);
++    }
 +#endif
      free(n);
  #endif /*]*/
  
+@@ -179,6 +221,17 @@ main(int argc, char *argv[])
+     }
+     infiles = argc - ix;
+ 
++#ifdef __MVS__
++    if (chgfdccsid(fileno(stdout), 819) || disableautocvt(fileno(stdout))) {
++    	perror("stdout");
++    }
++#endif
++#ifdef __MVS__
++    if (chgfdccsid(fileno(stdin), 819) || disableautocvt(fileno(stdin))) {
++    	perror("stdin");
++    }
++#endif
++
+     /* Open the output file. */
+     if (ofile) {
+ 	if (freopen(ofile, "w", stdout) == NULL) {
