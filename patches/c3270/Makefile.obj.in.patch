@@ -1,5 +1,5 @@
 diff --git a/c3270/Makefile.obj.in b/c3270/Makefile.obj.in
-index e640ffb..95d369c 100644
+index e640ffb..3dc7864 100644
 --- a/c3270/Makefile.obj.in
 +++ b/c3270/Makefile.obj.in
 @@ -73,13 +73,16 @@ fallbacks.c: mkfb $(FALLBACKS)
@@ -7,7 +7,7 @@ index e640ffb..95d369c 100644
  
  mkfb: mkfb.c
 -	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
-+	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
++	$(BUILDCC) $(CFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
  
  mkkeypad: mkkeypad.c
  	$(BUILDCC) $(XCPPFLAGS) -o $@ $<

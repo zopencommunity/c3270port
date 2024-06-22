@@ -2,3 +2,5 @@ log/
 log.STABLE/
 suite*
 install/
+testing/*.o
+testing/newiosvctest

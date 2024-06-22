@@ -34,6 +34,19 @@ FILE* __tmpfiletxt(void)
 	}
 	return f;
 }
+
+FILE *__freopentxt(const char *filename, const char *mode, FILE *stream)
+{
+	FILE* fp = freopen(filename, mode, stream);
+	if (!fp) {
+		return NULL;
+	}
+	int fno = fileno(fp);
+	if (__chgfdccsid(fno, 819) || __disableautocvt(fno)) {
+		return NULL;
+	}
+	return fp;
+}
 #endif
 
 static FILE *
@@ -76,21 +89,29 @@ mkfb_tmpfile(void)
     return f;
 }
 
-int cmain(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
 #ifdef __MVS__
 	zoslib_config_t c;
 	init_zoslib(c);
 #endif
-
-	FILE* f = mkfb_tmpfile();
+	char* output = "/tmp/output";
+	FILE* o;
+	FILE* f;
 	char buf[80];
+
+	o = __freopentxt(output, "w", stdout);
+	if (!o) {
+		fprintf(stderr, "freopen of stdout failed\n");
+		return 0;
+	}
+	f = mkfb_tmpfile();
 	if (f) {
 		fprintf(f, "%s\n", "Hello world");
 		rewind(f);
 		fgets(buf, sizeof(buf), f);
-		fprintf(stderr, "%s", buf);
+		fprintf(o, "%s", buf);
 		fclose(f);
 	} else {
 		fprintf(stderr, "Unable to open file\n");

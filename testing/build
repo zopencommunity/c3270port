@@ -2,6 +2,5 @@ ZOSLIB_ROOT=$HOME/zopen/usr/share/zopen/prod/zoslib/zoslib/
 TC=newiosvctest
 
 clang -c -fzos-le-char-mode=ascii -D_XOPEN_SOURCE=600 -D_ALL_SOURCE -D_OPEN_SYS_FILE_EXT=1 -D_AE_BIMODAL=1 -D_ENHANCED_ASCII_EXT=0xFFFFFFFF  -DZOSLIB_OVERRIDE_CLIB=1 -DZOSLIB_OVERRIDE_CLIB_GETENV=1 -I "${ZOSLIB_ROOT}/include" $TC.c 
-clang++ -c driver.cc
 
-clang++ -fzos-le-char-mode=ascii -L "${ZOSLIB_ROOT}/lib" -lzoslib driver.o $TC.o -o $TC
+clang++ -fzos-le-char-mode=ascii -L "${ZOSLIB_ROOT}/lib" "${ZOSLIB_ROOT}/lib/celquopt.s.o" -lzoslib-supp -lzoslib $TC.o -o $TC
