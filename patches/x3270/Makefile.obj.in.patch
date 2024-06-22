@@ -7,7 +7,7 @@ index e3273c6..2cf6b18 100644
  
  mkfb: mkfb.c
 -	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
-+	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
++	$(BUILDCC) $(CFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
  
  x3270: $(OBJS1) $(DEP3270) $(DEP3270I) $(DEP32XX) $(DEP3270STUBS)
  	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LD3270) $(LD3270I) $(LD32XX) $(LD3270STUBS) $(LIBS)
