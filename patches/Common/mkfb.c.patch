@@ -1,8 +1,8 @@
 diff --git a/Common/mkfb.c b/Common/mkfb.c
-index 3b2f047..9a444fc 100644
+index 3b2f047..4e979b4 100644
 --- a/Common/mkfb.c
 +++ b/Common/mkfb.c
-@@ -45,6 +45,28 @@
+@@ -45,6 +45,13 @@
  # include <errno.h>
  #endif /*]*/
  
@@ -11,27 +11,12 @@ index 3b2f047..9a444fc 100644
 +#include <_Ccsid.h>
 +#include <fcntl.h>
 +#include <sys/stat.h>
-+static int chgfdccsid(int fd, unsigned short ccsid) 
-+{
-+  attrib_t attr;
-+  memset(&attr, 0, sizeof(attr));
-+  attr.att_filetagchg = 1;
-+  attr.att_filetag.ft_ccsid = ccsid;
-+  if (ccsid != FT_BINARY) {
-+    attr.att_filetag.ft_txtflag = 1;
-+  }
-+  return __fchattr(fd, &attr, sizeof(attr));
-+}
-+static int disableautocvt(int fd) {
-+  struct f_cnvrt req = {SETCVTOFF, 0, 0};
-+  return fcntl(fd, F_CONTROL_CVT, &req);
-+}
 +#endif
 +
  #define BUFSZ	1024		/* input line buffer size */
  #define ARRSZ	8192		/* output array size */
  #define SSSZ	10		/* maximum nested ifdef */
-@@ -102,9 +124,55 @@ usage(void)
+@@ -102,9 +109,55 @@ usage(void)
      exit(1);
  }
  
@@ -90,7 +75,7 @@ index 3b2f047..9a444fc 100644
  static FILE *
  mkfb_tmpfile(void)
  {
-@@ -113,25 +181,33 @@ mkfb_tmpfile(void)
+@@ -113,25 +166,33 @@ mkfb_tmpfile(void)
      char *n;
  #endif /*]*/
  
@@ -139,7 +124,7 @@ index 3b2f047..9a444fc 100644
  #endif /*]*/
  
      return f;
-@@ -179,6 +255,7 @@ main(int argc, char *argv[])
+@@ -179,6 +240,7 @@ main(int argc, char *argv[])
      }
      infiles = argc - ix;
  
@@ -147,7 +132,7 @@ index 3b2f047..9a444fc 100644
      /* Open the output file. */
      if (ofile) {
  	if (freopen(ofile, "w", stdout) == NULL) {
-@@ -482,6 +559,17 @@ main(int argc, char *argv[])
+@@ -482,6 +544,17 @@ main(int argc, char *argv[])
  	rewind(tc);
  	rewind(tm);
      }
