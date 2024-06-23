@@ -1,0 +1,13 @@
+diff --git a/Common/Test/cti.py b/Common/Test/cti.py
+index cbb0f36..9dc2cd2 100755
+--- a/Common/Test/cti.py
++++ b/Common/Test/cti.py
+@@ -276,6 +276,8 @@ class cti(unittest.TestCase):
+             cmd = 'netstat -an -p TCPv6'
+         elif sys.platform.startswith("win") or sys.platform == 'darwin':
+             cmd = 'netstat -an -p TCP'
++        elif sys.platform.startswith("OS/390"):
++            cmd = 'netstat -a -P'
+         else:
+             cmd = 'netstat -ant'
+         def test():

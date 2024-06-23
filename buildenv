@@ -9,14 +9,27 @@ rm "suite3270-${C3270_VERSION}-src"
 ln -s "suite3270-${C3270_SVERSION}"  "suite3270-${C3270_VERSION}-src"
 export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
-export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less"
+export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less python"
 export ZOPEN_COMP=CLANG
 #export ZOPEN_SRC_DIR=c3270
 export ZOPEN_MAKE_MINIMAL=yes
+export ZOPEN_EXTRA_CPPFLAGS="-I\$PWD/include -I\$PWD/lib/include -I\$PWD/lib/include/unix"
+export ZOPEN_CHECK_OPTS="-j\$ZOPEN_NUM_JOBS test"
 export ZOPEN_INSTALL_MINIMAL=yes
 export ZOPEN_INSTALL_OPTS="-j\$ZOPEN_NUM_JOBS install install.man"
 export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-s3270 --enable-x3270if --with-ssl=yes"
 export ZOPEN_RUNTIME_DEPS="ncurses less" 
+
+# Requires request for tests
+zopen_init()
+{
+  if ! type python3 >/dev/null ; then
+    printError "need python3 with request package set up for build"
+  fi
+  python3 -m venv c3270_python
+  . ./c3270_python/bin/activate
+  pip3 install requests
+}
 
 zopen_check_results()
 {
@@ -33,7 +46,7 @@ zopen_check_results()
 
 zopen_append_to_env()
 {
-  # echo envars outside of PATH, MANPATH, LIBPATH
+  : 
 }
 
 zopen_append_to_setup()
