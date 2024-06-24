@@ -1,0 +1,13 @@
+diff --git a/x3270if/configure.in b/x3270if/configure.in
+index 0212ac4..8e6359d 100644
+--- a/x3270if/configure.in
++++ b/x3270if/configure.in
+@@ -81,7 +81,7 @@ AC_ARG_WITH(readline, [  --without-readline      Don't use the readline library]
+ dnl Checks for library functions.
+ AC_CHECK_FUNCS(vasprintf)
+ AC_FUNC_FSEEKO
+-AC_SEARCH_LIBS(newterm, ncursesw ncurses curses, , [AC_MSG_ERROR(Can't find libncurses or new-enough libcurses)])
++AC_SEARCH_LIBS(newterm, ncursesw ncurses, , [AC_MSG_ERROR(Can't find libncurses or new-enough libcurses)])
+ AC_SEARCH_LIBS(setupterm, tinfow tinfo, , [AC_MSG_ERROR(Can't find terminfo library)])
+ AC_CHECK_FUNCS(tiparm)
+ if test "$with_readline" != no; then

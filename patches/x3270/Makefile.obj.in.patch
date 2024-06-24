@@ -1,0 +1,13 @@
+diff --git a/x3270/Makefile.obj.in b/x3270/Makefile.obj.in
+index e3273c6..2cf6b18 100644
+--- a/x3270/Makefile.obj.in
++++ b/x3270/Makefile.obj.in
+@@ -85,7 +85,7 @@ fallbacks.c: mkfb $(FALLBACKS)
+ 	./mkfb -o $@ $(filter-out mkfb,$^)
+ 
+ mkfb: mkfb.c
+-	$(BUILDCC) $(XCPPFLAGS) -o $@ $(filter %.c,$^)
++	$(BUILDCC) $(CFLAGS) -o $@ $(filter %.c,$^) $(LDFLAGS) $(LIBS)
+ 
+ x3270: $(OBJS1) $(DEP3270) $(DEP3270I) $(DEP32XX) $(DEP3270STUBS)
+ 	$(CC) -o $@ $(OBJS1) $(LDFLAGS) $(LD3270) $(LD3270I) $(LD32XX) $(LD3270STUBS) $(LIBS)

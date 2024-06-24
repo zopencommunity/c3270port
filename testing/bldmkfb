@@ -1,0 +1,9 @@
+#!/bin/sh
+ME=$PWD
+cd $HOME/zopen/dev/c3270port/suite3270-4.3/obj/i370-ibm-openedition/c3270
+
+#clang -I. -I../../../c3270 -I../../../Common/c3270 -I../../../Common -I../../../include -DLIBX3270DIR=\"/home/fultonm/zopen/usr/local/zopen/c3270/c3270-DEV/etc/x3270\" -DNSIG=42 -D_XOPEN_SOURCE=600 -D_ALL_SOURCE -D_OPEN_SYS_FILE_EXT=1 -D_AE_BIMODAL=1 -D_ENHANCED_ASCII_EXT=0xFFFFFFFF  -DZOSLIB_OVERRIDE_CLIB=1 -DZOSLIB_OVERRIDE_CLIB_GETENV=1 -o mkfb ../../../Common/mkfb.c -Wl,-bedit=no  -L/home/fultonm/zopen/usr/local/zopen/curl/curl-8.8.0.20240523_003508.zos/lib -L/home/fultonm/zopen/usr/local/zopen/ncurses/ncurses-6.5.20240507_195319.zos/lib -L/home/fultonm/zopen/usr/local/zopen/ncurses/ncurses-6.5.20240507_195319.zos/lib -L/home/fultonm/zopen/usr/local/zopen/openssl/openssl-3.2.0.20240123_152950.zos/lib -L/home/fultonm/zopen/usr/local/zopen/zoslib/zoslib-main.20240530_111539.zos/lib -lcurl -lncurses -lncurses -lssl -lcrypto -lzoslib /home/fultonm/zopen/usr/local/zopen/zoslib/zoslib-main.20240530_111539.zos/lib/celquopt.s.o -lzoslib-supp /home/fultonm/zopen/dev/c3270port/suite3270-4.3/.zoslib_hooks/zoslib_env_hook.c.o
+
+clang -I. -I../../../c3270 -I../../../Common/c3270 -I../../../Common -I../../../include -DLIBX3270DIR=\"/home/fultonm/zopen/usr/local/zopen/c3270/c3270-DEV/etc/x3270\" -DNSIG=42 -D_XOPEN_SOURCE=600 -D_ALL_SOURCE -D_OPEN_SYS_FILE_EXT=1 -D_AE_BIMODAL=1 -D_ENHANCED_ASCII_EXT=0xFFFFFFFF  -DZOSLIB_OVERRIDE_CLIB=1 -DZOSLIB_OVERRIDE_CLIB_GETENV=1 -c  ../../../Common/mkfb.c
+
+mv mkfb.o $ME

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd ../suite3270-4.3/obj/i370-ibm-openedition/c3270
+
+./mkfb -c -o /tmp/fallbacks.c ../../../Common/fb-common ../../../Common/fb-printSession
+ls -rtlT /tmp/fallbacks.c
