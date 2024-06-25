@@ -8,8 +8,8 @@ export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3
 #
 # using custom build from c3270 dev
 #
-export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/specials/suite3270-4.3pre9-src.tgz"
-C3270_VERSION="4.3pre9"
+export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/specials/suite3270-4.3pre9b-src.tgz"
+C3270_VERSION="4.3pre9b"
 C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'p' -f 1)"
 #
 # end of changes for custom build
