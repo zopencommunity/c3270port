@@ -1,0 +1,59 @@
+diff --git a/Common/sa_malloc.c b/Common/sa_malloc.c
+index 8a10dc5..5939cac 100644
+--- a/Common/sa_malloc.c
++++ b/Common/sa_malloc.c
+@@ -201,6 +201,54 @@ vscprintf(const char *fmt, va_list ap)
+ }
+ #endif /*]*/
+ 
++#ifdef __MVS__ /*[*/
++/**
++ * vasprintf: print a string into an automatically malloc'd buffer, varargs
++ * version
++ *
++ * @param[out] bufp     returned buffer
++ * @param[in] fmt       printf format
++ * @param[in] ap        arguments
++ *
++ * @return length, not including NUL
++ */
++int
++my_vasprintf(char **bufp, const char *fmt, va_list ap)
++{
++    va_list ap_copy;
++    int buflen;
++    char *buf;
++
++    va_copy(ap_copy, ap);
++    buflen = vscprintf(fmt, ap_copy);
++    va_end(ap_copy);
++    buf = malloc(buflen + 1);
++    vsnprintf(buf, buflen + 1, fmt, ap);
++    *bufp = buf;
++    return buflen;
++}
++
++/**
++ * asprintf: print a string into an automatically malloc'd buffer
++ *
++ * @param[out] bufp     returned buffer
++ * @param[in] fmt       printf format
++ *
++ * @return length, not including NUL
++ */
++int
++my_asprintf(char **bufp, const char *fmt, ...)
++{
++    va_list ap;
++    int len;
++
++    va_start(ap, fmt);
++    len = my_vasprintf(bufp, fmt, ap);
++    va_end(ap);
++    return len;
++}
++#endif /*]*/
++
+ /* Check for memory leaks. */
+ void
+ sa_malloc_leak_check(void)
