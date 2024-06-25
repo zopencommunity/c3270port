@@ -5,6 +5,15 @@ C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'g' -f 1)"
 # export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/04.02/suite3270-4.2ga10-src.tgz"
 export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3270_VERSION}/suite3270-${C3270_VERSION}-src.tgz"
 
+#
+# using custom build from c3270 dev
+#
+export ZOPEN_STABLE_URL="http://x3270.bgp.nu/download/specials/suite3270-4.3pre9-src.tgz"
+C3270_VERSION="4.3pre9"
+C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'p' -f 1)"
+#
+# end of changes for custom build
+
 rm "suite3270-${C3270_VERSION}-src"
 ln -s "suite3270-${C3270_SVERSION}"  "suite3270-${C3270_VERSION}-src"
 export ZOPEN_BUILD_LINE="STABLE"
