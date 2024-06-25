@@ -1,0 +1,13 @@
+diff --git a/lib/3270/Makefile.obj.in b/lib/3270/Makefile.obj.in
+index a6cbba5..5a0e2d3 100644
+--- a/lib/3270/Makefile.obj.in
++++ b/lib/3270/Makefile.obj.in
+@@ -68,7 +68,7 @@ favicon.c: favicon.ico mkicon
+ 	./mkicon $< >$@
+ 
+ mkicon: mkicon.c
+-	$(BUILD_CC) $(BUILD_CFLAGS) -o $@ $<
++	$(BUILD_CC) $(BUILD_CFLAGS) -o $@ $< $(LDFLAGS) $(LIBS)
+ 
+ clean:
+ 	$(RM) *.o favicon.c mkicon $(LIB3270)
