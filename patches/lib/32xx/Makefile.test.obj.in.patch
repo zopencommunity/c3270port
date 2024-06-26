@@ -1,0 +1,26 @@
+diff --git a/lib/32xx/Makefile.test.obj.in b/lib/32xx/Makefile.test.obj.in
+index abcc28f..6c004cc 100644
+--- a/lib/32xx/Makefile.test.obj.in
++++ b/lib/32xx/Makefile.test.obj.in
+@@ -38,6 +38,8 @@ OBJS = $(BASE64_OBJS) $(XPOPEN_OBJS)
+ CCOPTIONS = @CCOPTIONS@
+ XCPPFLAGS = -I$(THIS) -I$(THIS)/../include/unix -I$(THIS)/../include -I$(TOP)/include @CPPFLAGS@
+ CFLAGS = $(CCOPTIONS) $(CDEBUGFLAGS) $(XCPPFLAGS) -fprofile-arcs -ftest-coverage @CFLAGS@
++LDFLAGS = @LDFLAGS@
++LIBS = @LIBS@
+ 
+ test: base64_test xpopen_test
+ 	$(RM) base64_test.gcda
+@@ -46,10 +48,10 @@ test: base64_test xpopen_test
+ 	./xpopen_test $(TESTOPTIONS)
+ 
+ base64_test: $(BASE64_OBJS)
+-	$(CC) $(CFLAGS) -o $@ $(BASE64_OBJS)
++	$(CC) $(CFLAGS) -o $@ $(BASE64_OBJS) $(LDFLAGS) $(LIBS)
+ 
+ xpopen_test: $(XPOPEN_OBJS)
+-	$(CC) $(CFLAGS) -o $@ $(XPOPEN_OBJS)
++	$(CC) $(CFLAGS) -o $@ $(XPOPEN_OBJS) $(LDFLAGS) $(LIBS)
+ 
+ coverage: base64_coverage xpopen_coverage
+ 
