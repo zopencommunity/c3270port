@@ -20,10 +20,8 @@ export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
 export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less python"
 export ZOPEN_COMP=CLANG
-#export ZOPEN_SRC_DIR=c3270
 export ZOPEN_MAKE_MINIMAL=yes
 export ZOPEN_EXTRA_CPPFLAGS="-I\$PWD/include -I\$PWD/lib/include -I\$PWD/lib/include/unix"
-export ZOPEN_CHECK_OPTS="-j\$ZOPEN_NUM_JOBS test"
 export ZOPEN_INSTALL_MINIMAL=yes
 export ZOPEN_INSTALL_OPTS="-j\$ZOPEN_NUM_JOBS install install.man"
 export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-s3270 --enable-x3270if --with-ssl=yes"
@@ -40,6 +38,19 @@ zopen_init()
   pip3 install requests
 }
 
+#
+# Testing can't be turned on by default because it hangs at 
+# the end waiting because there are open sockets from some
+# failing tests.
+# BUT - you can run it by hand and see what results you get
+# by uncommenting the ZOPEN_CHECK_OPTS below.
+# I would recommend running with (export ZOPEN_NUM_JOBS=1; zopen build)
+# to make the output easier to work with.
+#
+# Ran 135 tests in 95.363s
+# FAILED (failures=24, errors=9, skipped=20)
+#
+#export ZOPEN_CHECK_OPTS="-j\$ZOPEN_NUM_JOBS test"
 zopen_check_results()
 {
   dir="$1"

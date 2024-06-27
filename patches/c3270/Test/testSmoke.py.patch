@@ -1,0 +1,12 @@
+diff --git a/c3270/Test/testSmoke.py b/c3270/Test/testSmoke.py
+index 7c09595..32c47db 100755
+--- a/c3270/Test/testSmoke.py
++++ b/c3270/Test/testSmoke.py
+@@ -40,6 +40,7 @@ import Common.Test.playback as playback
+ import Common.Test.cti as cti
+ 
+ @unittest.skipIf(sys.platform == "darwin", "Not ready for c3270 graphic tests")
++@unittest.skipIf(sys.platform == "zos", "? z/OS Hang ?")
+ @unittest.skipIf(sys.platform.startswith('win'), "Windows uses different c3270 graphic tests")
+ class TestC3270Smoke(cti.cti):
+ 
