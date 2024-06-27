@@ -1,13 +1,43 @@
 diff --git a/Common/Test/cti.py b/Common/Test/cti.py
-index cbb0f36..8720abe 100755
+index cbb0f36..d3e77b2 100755
 --- a/Common/Test/cti.py
 +++ b/Common/Test/cti.py
-@@ -276,6 +276,8 @@ class cti(unittest.TestCase):
-             cmd = 'netstat -an -p TCPv6'
-         elif sys.platform.startswith("win") or sys.platform == 'darwin':
-             cmd = 'netstat -an -p TCP'
-+        elif sys.platform.startswith("zos"):
-+            cmd = 'netstat -a'
-         else:
-             cmd = 'netstat -ant'
+@@ -268,20 +268,25 @@ class cti(unittest.TestCase):
+ 
+     def check_listen(self, port, ipv6=False):
+         '''Check for a particular port being listened on'''
+-        if sys.platform == 'darwin':
+-            r = re.compile(rf'\.{port} .* LISTEN')
+-        else:
+-            r = re.compile(rf':{port} .* LISTEN')
+-        if sys.platform.startswith("win") and ipv6:
+-            cmd = 'netstat -an -p TCPv6'
+-        elif sys.platform.startswith("win") or sys.platform == 'darwin':
+-            cmd = 'netstat -an -p TCP'
+-        else:
+-            cmd = 'netstat -ant'
          def test():
+-            netstat = Popen(cmd, shell=True, stdout=PIPE)
+-            stdout = netstat.communicate()[0].decode('utf8').split('\n')
+-            return any(r.search(line) for line in stdout)
++            try:
++                try:
++                    Socket = socket(AF_INET, SOCK_STREAM, 0) #Create a socket.
++                except:
++                    print("Error: Can't open socket!\n")
++                    exit(4)
++                    Socket.connect(("127.0.0.1", port)) #Try connect the port. If port is not listening, throws ConnectionRefusedError.
++                    Connected = True
++            except ConnectionRefusedError:
++                Connected = False
++            finally:
++                if(Connected and Port != Socket.getsockname()[1]): #If connected,
++                    rc = True
++                    Socket.close() #Close socket.
++                else:
++                    rc = False
++            return rc
++
+         self.try_until(test, 2, f"Port {port} is not bound")
+ 
+     def wait_for_pty_output(self, timeout: int, fd: int, text: str):
