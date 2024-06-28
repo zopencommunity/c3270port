@@ -1,0 +1,12 @@
+diff --git a/c3270/Test/testHostsFile.py b/c3270/Test/testHostsFile.py
+index 79cf6b7..13bcdea 100755
+--- a/c3270/Test/testHostsFile.py
++++ b/c3270/Test/testHostsFile.py
+@@ -41,6 +41,7 @@ import Common.Test.playback as playback
+ import Common.Test.cti as cti
+ 
+ @unittest.skipIf(sys.platform.startswith('win'), "Windows uses different c3270 graphic tests")
++@unittest.skipIf(sys.platform == 'zos', "z/OS does not close socket")
+ class TestC3270HostsFile(cti.cti):
+ 
+     # Drain the PTY.

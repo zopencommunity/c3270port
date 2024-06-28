@@ -22,6 +22,7 @@ export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less python
 export ZOPEN_COMP=CLANG
 export ZOPEN_MAKE_MINIMAL=yes
 export ZOPEN_EXTRA_CPPFLAGS="-I\$PWD/include -I\$PWD/lib/include -I\$PWD/lib/include/unix"
+export ZOPEN_CHECK_OPTS="-j1 test"
 export ZOPEN_INSTALL_MINIMAL=yes
 export ZOPEN_INSTALL_OPTS="-j\$ZOPEN_NUM_JOBS install install.man"
 export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-s3270 --enable-x3270if --with-ssl=yes"
@@ -38,30 +39,24 @@ zopen_init()
   pip3 install requests
 }
 
-#
-# Testing can't be turned on by default because it hangs at 
-# the end waiting because there are open sockets from some
-# failing tests.
-# BUT - you can run it by hand and see what results you get
-# by uncommenting the ZOPEN_CHECK_OPTS below.
-# I would recommend running with (export ZOPEN_NUM_JOBS=1; zopen build)
-# to make the output easier to work with.
-#
-# Ran 135 tests in 95.363s
-# FAILED (failures=24, errors=9, skipped=20)
-#
-#export ZOPEN_CHECK_OPTS="-j\$ZOPEN_NUM_JOBS test"
 zopen_check_results()
 {
   dir="$1"
   pfx="$2"
   chk="$1/$2_check.log"
 
-  # Echo the following information to gauge build health
-  echo "actualFailures:0"
-  echo "totalTests:1"
-  echo "expectedFailures:0"
-  echo "expectedTotalTests:1"
+  line=$(egrep '^Ran .* tests in .*s' "${chk}")
+  totalTests=$(echo "${line}" | awk ' { print $2; }')
+  line=$(egrep '^FAILED \(failures=.*, errors=.*, skipped=.*\)' "${chk}" | tr '=,()' ' ')
+  actualFailures=$(echo "${line}" | awk ' { print $3 }')
+  actualErrors=$(echo "${line}" | awk ' { print $5 }')
+  actualSkipped=$(echo "${line}" | awk ' { print $7 }')
+
+  # Echo the following information to determine if build healthy
+  echo "actualFailures:${actualFailures}"
+  echo "totalTests:${totalTests}"
+  echo "expectedFailures:21"
+  echo "expectedTotalTests:126"
 }
 
 zopen_append_to_env()

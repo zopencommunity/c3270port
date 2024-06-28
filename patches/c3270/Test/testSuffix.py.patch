@@ -1,0 +1,12 @@
+diff --git a/c3270/Test/testSuffix.py b/c3270/Test/testSuffix.py
+index cd83ec3..975b67a 100755
+--- a/c3270/Test/testSuffix.py
++++ b/c3270/Test/testSuffix.py
+@@ -34,6 +34,7 @@ import Common.Test.suffix as suffix
+ 
+ class TestC3270Suffix(cti.cti):
+ 
++    @unittest.skipIf(sys.platform == 'zos', 'z/OS does not close socket')
+     def test_c3270_c3270(self):
+         suffix.suffix_test(self, 'c3270', '.c3270', self.children)
+ 
