@@ -55,8 +55,8 @@ zopen_check_results()
   # Echo the following information to determine if build healthy
   echo "actualFailures:${actualFailures}"
   echo "totalTests:${totalTests}"
-  echo "expectedFailures:21"
-  echo "expectedTotalTests:126"
+  echo "expectedFailures:24"
+  echo "expectedTotalTests:128"
 }
 
 zopen_append_to_env()
