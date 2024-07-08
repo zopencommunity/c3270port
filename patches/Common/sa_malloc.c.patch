@@ -1,10 +1,10 @@
 diff --git a/Common/sa_malloc.c b/Common/sa_malloc.c
-index 8a10dc5..5939cac 100644
+index 8a10dc5..c28b211 100644
 --- a/Common/sa_malloc.c
 +++ b/Common/sa_malloc.c
-@@ -201,6 +201,54 @@ vscprintf(const char *fmt, va_list ap)
- }
- #endif /*]*/
+@@ -39,6 +39,54 @@
+ #include "lazya.h"
+ #include "sa_malloc.h"
  
 +#ifdef __MVS__ /*[*/
 +/**
@@ -54,6 +54,6 @@ index 8a10dc5..5939cac 100644
 +}
 +#endif /*]*/
 +
- /* Check for memory leaks. */
- void
- sa_malloc_leak_check(void)
+ static size_t allocated;
+ 
+ /* Preamble saved before each malloc'd block. */
