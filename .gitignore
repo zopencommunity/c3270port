@@ -4,3 +4,4 @@ suite*
 install/
 testing/*.o
 testing/newiosvctest
+testing/__pycache__/
