@@ -1,0 +1,12 @@
+diff --git a/c3270/Test/testAltQ.py b/c3270/Test/testAltQ.py
+index fbe806e..a0a2980 100755
+--- a/c3270/Test/testAltQ.py
++++ b/c3270/Test/testAltQ.py
+@@ -37,6 +37,7 @@ import threading
+ import Common.Test.cti as cti
+ 
+ @unittest.skipIf(sys.platform.startswith('win'), "Windows does not support PTYs")
++@unittest.skipIf(sys.platform == 'zos', "z/OS does not close socket")
+ class TestC3270AltQ(cti.cti):
+ 
+     # Drain the PTY.

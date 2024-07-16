@@ -2,4 +2,8 @@
 
 # c3270
 
-3270 terminal
+## References
+
+- [The x3270 Wiki](https://x3270.miraheze.org/wiki/Main_Page)
+  - [Host name syntax](https://x3270.miraheze.org/wiki/Host_name_syntax)
+  - [c3270 Menu](https://x3270.miraheze.org/wiki/C3270/Menu)

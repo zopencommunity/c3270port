@@ -1,0 +1,12 @@
+diff --git a/c3270/Test/testPrompt.py b/c3270/Test/testPrompt.py
+index 1ad88eb..661313a 100755
+--- a/c3270/Test/testPrompt.py
++++ b/c3270/Test/testPrompt.py
+@@ -42,6 +42,7 @@ import Common.Test.playback as playback
+ import Common.Test.cti as cti
+ 
+ @unittest.skipIf(sys.platform.startswith('win'), "Windows does not support PTYs")
++@unittest.skipIf(sys.platform == 'zos', "z/OS does not close socket")
+ class TestC3270Prompt(cti.cti):
+ 
+     # Drain the PTY.

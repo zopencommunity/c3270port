@@ -1,5 +1,10 @@
+#!/bin/sh
+
+#
+# script to build a stand-alone C file with zoslib
+
 ZOSLIB_ROOT=$HOME/zopen/usr/share/zopen/prod/zoslib/zoslib/
-TC=newiosvctest
+TC=$1
 
 clang -c -fzos-le-char-mode=ascii -D_XOPEN_SOURCE=600 -D_ALL_SOURCE -D_OPEN_SYS_FILE_EXT=1 -D_AE_BIMODAL=1 -D_ENHANCED_ASCII_EXT=0xFFFFFFFF  -DZOSLIB_OVERRIDE_CLIB=1 -DZOSLIB_OVERRIDE_CLIB_GETENV=1 -I "${ZOSLIB_ROOT}/include" $TC.c 
 

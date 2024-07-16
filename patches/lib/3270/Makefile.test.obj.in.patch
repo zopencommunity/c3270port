@@ -1,0 +1,30 @@
+diff --git a/lib/3270/Makefile.test.obj.in b/lib/3270/Makefile.test.obj.in
+index 7f8a014..c312c6a 100644
+--- a/lib/3270/Makefile.test.obj.in
++++ b/lib/3270/Makefile.test.obj.in
+@@ -38,6 +38,8 @@ UTF8_OBJS = utf8_test.o utf8.o sa_malloc.o
+ CCOPTIONS = @CCOPTIONS@
+ XCPPFLAGS = -I$(THIS) -I$(THIS)/../include/unix -I$(THIS)/../include -I$(TOP)/include @CPPFLAGS@
+ CFLAGS = $(CCOPTIONS) $(CDEBUGFLAGS) $(XCPPFLAGS) -fprofile-arcs -ftest-coverage @CFLAGS@
++LDFLAGS = @LDFLAGS@
++LIBS = @LIBS@
+ 
+ test: json_test bind_opts_test utf8_test
+ 	$(RM) json_test.gcda bind_opts_test.gcda utf8_test.gcda
+@@ -46,13 +48,13 @@ test: json_test bind_opts_test utf8_test
+ 	./utf8_test $(TESTOPTIONS)
+ 
+ json_test: $(JSON_OBJS)
+-	$(CC) $(CFLAGS) -o $@ $(JSON_OBJS)
++	$(CC) $(CFLAGS) -o $@ $(JSON_OBJS) $(LDFLAGS) $(LIBS)
+ 
+ bind_opts_test: $(BIND_OPTS_OBJS)
+-	$(CC) $(CFLAGS) -o $@ $(BIND_OPTS_OBJS)
++	$(CC) $(CFLAGS) -o $@ $(BIND_OPTS_OBJS) $(LDFLAGS) $(LIBS)
+ 
+ utf8_test: $(UTF8_OBJS)
+-	$(CC) $(CFLAGS) -o $@ $(UTF8_OBJS)
++	$(CC) $(CFLAGS) -o $@ $(UTF8_OBJS) $(LDFLAGS) $(LIBS)
+ 
+ coverage: json_coverage bind_opts_coverage utf8_coverage
+ 

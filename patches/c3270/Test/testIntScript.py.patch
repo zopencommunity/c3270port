@@ -1,0 +1,25 @@
+diff --git a/c3270/Test/testIntScript.py b/c3270/Test/testIntScript.py
+index 9596e60..a174e80 100755
+--- a/c3270/Test/testIntScript.py
++++ b/c3270/Test/testIntScript.py
+@@ -95,15 +95,19 @@ class TestC3270IntScript(cti.cti):
+ 
+         self.vgwait_pid(pid)
+         os.close(fd)
+-    
++
++    @unittest.skip('z/OS hang')
+     def test_c3270_interactive_script_noprompt(self):
+         self.c3270_interactive_script_test(prompt=False)
++
++    @unittest.skip('z/OS hang')
+     def test_c3270_interactive_script_prompt(self):
+         self.c3270_interactive_script_test(prompt=True)
+ 
+     
+         
+     # c3270 bad interactive script test
++    @unittest.skip('z/OS hang')
+     def test_c3270_interactive_script_wrong(self):
+ 
+         # Fork c3270 with a PTY between this process and it.
