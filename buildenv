@@ -1,5 +1,5 @@
 # bump: c3270-version /C3270_VERSION="(.*)"/ https://sourceforge.net/projects/x3270/files/x3270/|re:/Click.to.enter.([\d.]+g?a?\d+)"/
-C3270_VERSION="4.4ga6"
+C3270_VERSION="4.5ga5"
 C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'g' -f 1)"
 
 export ZOPEN_CATEGORIES="utilities"
