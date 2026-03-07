@@ -2,7 +2,8 @@
 
 # C3270
 
-A 3270 terminal emulator
+A 3270 terminal emulator. 
+This build enables the emulator to run in the USS environment on z/OS.
 
 # Installation and Usage
 
