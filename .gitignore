@@ -5,3 +5,4 @@ install/
 testing/*.o
 testing/newiosvctest
 testing/__pycache__/
+.zoslib_hooks
