@@ -1,0 +1,22 @@
+diff --git a/Common/glue.c b/Common/glue.c
+index 92578b7..7a7e7b8 100644
+--- a/Common/glue.c
++++ b/Common/glue.c
+@@ -508,6 +508,8 @@ static opt_t base_opts[] = {
+     "<path>", "Pathname of the security cookie file" },
+ { OptDevName,  OPT_STRING,  false, ResDevName,   aoffset(devname),
+     "<name>", "Device name (workstation ID) for RFC 4777" },
++{ OptExpressLogon, OPT_BOOLEAN, false, ResExpressLogon, aoffset(express_logon),
++    NULL, "Enable Express Logon (ELF)" },
+ #if defined(LOCAL_PROCESS) /*[*/
+ { OptLocalProcess,OPT_SKIP2,false, NULL,         NULL,
+     "<command> [<arg>...]", "Run <command> instead of making TELNET connection"
+@@ -517,6 +519,8 @@ static opt_t base_opts[] = {
+     "<filename>", "Use <hostname> as the ibm_hosts file" },
+ { OptHttpd,    OPT_STRING,  false, ResHttpd,     aoffset(httpd_port),
+     "[<addr>:]<port>", "TCP port to listen on for http requests" },
++{ OptIbmApplId, OPT_STRING, false, ResIbmApplId, aoffset(ibm_applid),
++  "<applid>", "VTAM application ID for Express Logon" },
+ #if defined(_WIN32) /*[*/
+ { OptLocalCp,  OPT_INT,	false, ResLocalCp,   aoffset(local_cp),
+     "<codepage>", "Use <codepage> instead of ANSI codepage for local I/O"

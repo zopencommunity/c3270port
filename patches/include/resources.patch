@@ -1,0 +1,34 @@
+diff --git a/include/resources.h b/include/resources.h
+index 03f08c3..70220c1 100644
+--- a/include/resources.h
++++ b/include/resources.h
+@@ -129,6 +129,7 @@
+ #define ResHostname		"hostname"
+ #define ResHostsFile		"hostsFile"
+ #define ResHttpd		"httpd"
++#define ResIbmApplId 		"ibmApplId"
+ #define ResIconFont		"iconFont"
+ #define ResIconLabelFont	"iconLabelFont"
+ #define ResIcrnl		"icrnl"
+@@ -533,11 +534,13 @@
+ #define OptDefScreen		"-defscreen"
+ #define OptDevName		"-devname"
+ #define OptEmulatorFont		"-efont"
++#define OptExpressLogon		"-expresslogon"
+ #define OptHostsFile		"-hostsfile"
+ #define OptHelp1		"--help"
+ #define OptHelp2		"-?"
+ #define OptHelp3		"/?"
+ #define OptHttpd		"-httpd"
++#define OptIbmApplId 		"-ibmapplid"
+ #define OptIconName		"-iconname"
+ #define OptIconX		"-iconx"
+ #define OptIconY		"-icony"
+@@ -610,6 +613,7 @@
+ /* Resources that are gotten explicitly. */
+ #define ResComposeMap		"composeMap"
+ #define ResEmulatorFontList	"emulatorFontList"
++#define ResExpressLogon 	"expressLogon"
+ #define ResKeyHeight		"keyHeight"
+ #define ResKeyWidth		"keyWidth"
+ #define ResLargeKeyWidth	"largeKeyWidth"
