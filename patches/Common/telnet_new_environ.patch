@@ -1,5 +1,5 @@
 --- a/Common/telnet_new_environ.c.orig	2026-04-02 20:53:59
-+++ b/Common/telnet_new_environ.c	2026-04-02 20:56:04
++++ b/Common/telnet_new_environ.c	2026-04-02 21:16:32
 @@ -217,6 +217,16 @@
      environ_clear(&vars);
      environ_clear(&uservars);
@@ -38,23 +38,47 @@
  
      if (ut_getenv("NO_CODEPAGE") == NULL) {
  	/* Set CODEPAGE, CHARSET and KBDTYPE from the host codepage, with overrides from the environment. */
-@@ -644,7 +651,15 @@
-     } else {
- 	Replace(*target, NewString(value));
-     }
+@@ -517,7 +524,24 @@
+     vb_init(&trace_out);
+     vb_appendf(&trace_out, "%s %s %s", cmd(SB), opt(TELOPT_NEW_ENVIRON),
+ 	    telquals[TELQUAL_IS]);
++    /* For Express Logon, always send USER first (even if not requested). */
++    if (appres.express_logon || appres.ibm_applid != NULL) {
++	environ_t *user_value = find_environ(&vars, USER_VARNAME,
++		strlen(USER_VARNAME));
++	if (user_value != NULL) {
++	    vb_appendf(&reply, "%c", TELOBJ_VAR);
++	    vb_append(&reply, user_value->name, user_value->name_len);
++	    vb_appendf(&reply, "%c", TELOBJ_VALUE);
++	    vb_append(&reply, user_value->value, user_value->value_len);
+ 
++	    vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
++		    telobjs[TELOBJ_VAR],
++		    expand_name(user_value->name, user_value->name_len),
++		    telobjs[TELOBJ_VALUE],
++		    expand_name(user_value->value, user_value->value_len));
++	}
++    }
 +
-+    return TU_SUCCESS;
-+}
+     FOREACH_LLIST(ereqs, ereq, ereq_t *) {
+ 	if (ereq->name_len == 0) {
+ 	    llist_t *l;
+@@ -648,6 +672,14 @@
+     return TU_SUCCESS;
+ }
  
 +/* Define the toggle function for expressLogon */
 +static toggle_upcall_ret_t
 +toggle_express_logon(const char *name, const char *value, unsigned flags, ia_t ia)
 +{
 +    /* Simple boolean toggle - no special handling needed beyond default behavior */
-     return TU_SUCCESS;
- }
- 
-@@ -657,4 +672,6 @@
++    return TU_SUCCESS;
++}
++
+ /**
+  * New-environment module registration.
+  */
+@@ -657,4 +689,6 @@
      /* Register the toggles. */
      register_extended_toggle(ResUser, toggle_string, NULL, NULL, (void **)&appres.user, XRM_STRING);
      register_extended_toggle(ResDevName, toggle_string, NULL, NULL, (void **)&appres.devname, XRM_STRING);
