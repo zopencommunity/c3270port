@@ -23,20 +23,12 @@ index c3745aa..3c24c01 100644
  	e->devname = devname_init(appres.devname);
      }
  
--    /* Set IBMELF. */
--    add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
--
--    /* Set IBMAPPLID, from the environment. */
--    ibmapplid = getenv(IBMAPPLID_VARNAME);
--    if (ibmapplid == NULL) {
--	ibmapplid = IBMAPPLID_NONE;
 +    /* Set IBMELF only when Express Logon is requested. */
 +    if (appres.express_logon || appres.ibm_applid != NULL) {
 +        add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
 +        vtrace("Express Logon: USER=%s IBMAPPLID=%s\n",
 +            user ? user : "(none)", ibmapplid);
-     }
--    add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
++    }
  
      if (ut_getenv("NO_CODEPAGE") == NULL) {
  	/* Set CODEPAGE, CHARSET and KBDTYPE from the host codepage, with overrides from the environment. */
@@ -62,5 +54,3 @@ index c3745aa..3c24c01 100644
 +    register_extended_toggle(ResIbmApplId, toggle_string, NULL, NULL, (void **)&appres.ibm_applid, XRM_STRING);
 +    register_extended_toggle(ResExpressLogon, toggle_express_logon, NULL, NULL, (void **)&appres.express_logon, XRM_BOOLEAN);
  }
-
-# Made with Bob
