@@ -8,7 +8,7 @@ index 0510d38..eff0f49 100644
      }
 +
 +    /* Do not run the login macro if Express Logon is active. */
-+    if (appres.express_logon || appres.ibm_applid != NULL) {
++    if (appres.express_logon) {
 +        ps = NULL;
 +        vtrace("Express Logon active: suppressing login macro.\n");
 +    }
@@ -16,3 +16,5 @@ index 0510d38..eff0f49 100644
      if (ps != NULL) {
  	login_macro(ps);
      }
+
+# Made with Bob
