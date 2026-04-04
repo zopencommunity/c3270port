@@ -1,89 +1,55 @@
---- a/Common/telnet_new_environ.c.orig	2026-04-02 20:53:59
-+++ b/Common/telnet_new_environ.c	2026-04-04 02:35:00
-@@ -217,6 +217,16 @@
-     environ_clear(&vars);
-     environ_clear(&uservars);
+--- telnet_new_environ.c.orig	2026-04-02 20:53:59
++++ telnet_new_environ.c	2026-04-03 19:53:33
+@@ -553,32 +553,30 @@
  
-+    /* Set IBMAPPLID. from appres, then from the environment. */
-+    ibmapplid = appres.ibm_applid;
-+    if (ibmapplid == NULL) {
-+        ibmapplid = getenv(IBMAPPLID_VARNAME);
-+    }
-+    if (ibmapplid == NULL) {
-+        ibmapplid = IBMAPPLID_NONE;
-+    }
-+    add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
-+
-     /* Set USER. Resource first, then from the environment. */
-     user = host_user? host_user: (appres.user? appres.user: getenv("USER"));
-     if (user == NULL) {
-@@ -234,15 +244,12 @@
- 	e->devname = devname_init(appres.devname);
-     }
+ 	    /* Dump one entry. */
+ 	    value = find_environ(
+-		    (ereq->group == TELOBJ_VAR)? &vars : &uservars, ereq->name,
+-		    ereq->name_len);
++	     (ereq->group == TELOBJ_VAR)? &vars : &uservars, ereq->name,
++	     ereq->name_len);
  
--    /* Set IBMELF. */
--    add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
--
--    /* Set IBMAPPLID, from the environment. */
--    ibmapplid = getenv(IBMAPPLID_VARNAME);
--    if (ibmapplid == NULL) {
--	ibmapplid = IBMAPPLID_NONE;
-+    /* Set IBMELF only when Express Logon is explicitly requested. */
-+    if (appres.express_logon) {
-+        add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
-+        vtrace("Express Logon: USER=%s IBMAPPLID=%s\n",
-+            user ? user : "(none)", ibmapplid);
-     }
--    add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
+-	    vb_appendf(&reply, "%c", ereq->group);
+-	    vb_append(&reply, ereq->name, ereq->name_len);
++	    /* Only respond if we have a value for this variable (match PCOMM behavior) */
+ 	    if (value != NULL) {
+-		vb_appendf(&reply, "%c", TELOBJ_VALUE);
+-		if (value->devname != NULL) {
+-		    dnext = devname_next(value->devname);
++	 vb_appendf(&reply, "%c", ereq->group);
++	 vb_append(&reply, ereq->name, ereq->name_len);
++	 vb_appendf(&reply, "%c", TELOBJ_VALUE);
++	 if (value->devname != NULL) {
++	     dnext = devname_next(value->devname);
  
-     if (ut_getenv("NO_CODEPAGE") == NULL) {
- 	/* Set CODEPAGE, CHARSET and KBDTYPE from the host codepage, with overrides from the environment. */
-@@ -517,7 +524,24 @@
-     vb_init(&trace_out);
-     vb_appendf(&trace_out, "%s %s %s", cmd(SB), opt(TELOPT_NEW_ENVIRON),
- 	    telquals[TELQUAL_IS]);
-+    /* For Express Logon, always send USER first (even if not requested). */
-+    if (appres.express_logon) {
-+	environ_t *user_value = find_environ(&vars, USER_VARNAME,
-+		strlen(USER_VARNAME));
-+	if (user_value != NULL) {
-+	    vb_appendf(&reply, "%c", TELOBJ_VAR);
-+	    vb_append(&reply, user_value->name, user_value->name_len);
-+	    vb_appendf(&reply, "%c", TELOBJ_VALUE);
-+	    vb_append(&reply, user_value->value, user_value->value_len);
+-		    vb_append(&reply, dnext, strlen(dnext));
+-		} else {
+-		    vb_append(&reply, value->value, value->value_len);
+-		}
+-	    }
++	     vb_append(&reply, dnext, strlen(dnext));
++	 } else {
++	     vb_append(&reply, value->value, value->value_len);
++	 }
  
-+	    vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
-+		    telobjs[TELOBJ_VAR],
-+		    expand_name(user_value->name, user_value->name_len),
-+		    telobjs[TELOBJ_VALUE],
-+		    expand_name(user_value->value, user_value->value_len));
-+	}
-+    }
-+
-     FOREACH_LLIST(ereqs, ereq, ereq_t *) {
- 	if (ereq->name_len == 0) {
- 	    llist_t *l;
-@@ -648,6 +672,14 @@
-     return TU_SUCCESS;
- }
- 
-+/* Define the toggle function for expressLogon */
-+static toggle_upcall_ret_t
-+toggle_express_logon(const char *name, const char *value, unsigned flags, ia_t ia)
-+{
-+    /* Simple boolean toggle - no special handling needed beyond default behavior */
-+    return TU_SUCCESS;
-+}
-+
- /**
-  * New-environment module registration.
-  */
-@@ -657,4 +689,6 @@
-     /* Register the toggles. */
-     register_extended_toggle(ResUser, toggle_string, NULL, NULL, (void **)&appres.user, XRM_STRING);
-     register_extended_toggle(ResDevName, toggle_string, NULL, NULL, (void **)&appres.devname, XRM_STRING);
-+    register_extended_toggle(ResIbmApplId, toggle_string, NULL, NULL, (void **)&appres.ibm_applid, XRM_STRING);
-+    register_extended_toggle(ResExpressLogon, toggle_express_logon, NULL, NULL, (void **)&appres.express_logon, XRM_BOOLEAN);
- }
-
-# Made with Bob
+-	    /* Trace the reply, */
+-	    vb_appendf(&trace_out, " %s \"%s\"",
+-		    telobjs[ereq->group],
+-		    expand_name(ereq->name, ereq->name_len));
+-	    if (value != NULL) {
+-		vb_appendf(&trace_out, " %s \"%s\"",
+-		    telobjs[TELOBJ_VALUE],
+-		    (dnext != NULL)?
+-			expand_name(dnext, strlen(dnext)):
+-			expand_name(value->value, value->value_len));
++	 /* Trace the reply */
++	 vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
++	  telobjs[ereq->group],
++	  expand_name(ereq->name, ereq->name_len),
++	  telobjs[TELOBJ_VALUE],
++	  (dnext != NULL)?
++	      expand_name(dnext, strlen(dnext)):
++	      expand_name(value->value, value->value_len));
+ 	    }
+ 	}
+     } FOREACH_LLIST_END(ereqs, ereq, ereq_t);
