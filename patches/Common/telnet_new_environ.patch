@@ -1,6 +1,39 @@
---- telnet_new_environ.c.orig	2026-04-02 20:53:59
-+++ telnet_new_environ.c	2026-04-03 19:53:33
-@@ -553,32 +553,30 @@
+diff --git a/Common/telnet_new_environ.c b/Common/telnet_new_environ.c
+index c3745aa..3853627 100644
+--- a/Common/telnet_new_environ.c
++++ b/Common/telnet_new_environ.c
+@@ -229,18 +229,23 @@ environ_init(void)
+ 
+     /* Set DEVNAME, from appres. */
+     if (appres.devname != NULL) {
+-	environ_t *e = add_environ(&uservars, DEVNAME_USERVARNAME, appres.devname);
++ environ_t *e = add_environ(&uservars, DEVNAME_USERVARNAME, appres.devname);
+ 
+-	e->devname = devname_init(appres.devname);
++ e->devname = devname_init(appres.devname);
+     }
+ 
+-    /* Set IBMELF. */
+-    add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
++    /* Set IBMELF only when Express Logon is requested. */
++    if (appres.express_logon) {
++ add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
++    }
+ 
+-    /* Set IBMAPPLID, from the environment. */
+-    ibmapplid = getenv(IBMAPPLID_VARNAME);
++    /* Set IBMAPPLID, from appres or the environment. */
++    ibmapplid = appres.ibm_applid;
++    if (ibmapplid == NULL) {
++ ibmapplid = getenv(IBMAPPLID_VARNAME);
++    }
+     if (ibmapplid == NULL) {
+-	ibmapplid = IBMAPPLID_NONE;
++ ibmapplid = IBMAPPLID_NONE;
+     }
+     add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
+ 
+@@ -553,32 +558,30 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
  
  	    /* Dump one entry. */
  	    value = find_environ(
@@ -16,22 +49,13 @@
 -		vb_appendf(&reply, "%c", TELOBJ_VALUE);
 -		if (value->devname != NULL) {
 -		    dnext = devname_next(value->devname);
-+	 vb_appendf(&reply, "%c", ereq->group);
-+	 vb_append(&reply, ereq->name, ereq->name_len);
-+	 vb_appendf(&reply, "%c", TELOBJ_VALUE);
-+	 if (value->devname != NULL) {
-+	     dnext = devname_next(value->devname);
- 
+-
 -		    vb_append(&reply, dnext, strlen(dnext));
 -		} else {
 -		    vb_append(&reply, value->value, value->value_len);
 -		}
 -	    }
-+	     vb_append(&reply, dnext, strlen(dnext));
-+	 } else {
-+	     vb_append(&reply, value->value, value->value_len);
-+	 }
- 
+-
 -	    /* Trace the reply, */
 -	    vb_appendf(&trace_out, " %s \"%s\"",
 -		    telobjs[ereq->group],
@@ -42,6 +66,17 @@
 -		    (dnext != NULL)?
 -			expand_name(dnext, strlen(dnext)):
 -			expand_name(value->value, value->value_len));
++	 vb_appendf(&reply, "%c", ereq->group);
++	 vb_append(&reply, ereq->name, ereq->name_len);
++	 vb_appendf(&reply, "%c", TELOBJ_VALUE);
++	 if (value->devname != NULL) {
++	     dnext = devname_next(value->devname);
++
++	     vb_append(&reply, dnext, strlen(dnext));
++	 } else {
++	     vb_append(&reply, value->value, value->value_len);
++	 }
++
 +	 /* Trace the reply */
 +	 vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
 +	  telobjs[ereq->group],
