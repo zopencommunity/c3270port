@@ -1,5 +1,5 @@
---- host.c.orig	2024-01-01 00:00:00.000000000 +0000
-+++ host.c	2026-04-04 00:00:00.000000000 +0000
+--- a/Common/host.c
++++ b/Common/host.c
 @@ -687,6 +687,16 @@
      if (ps == NULL) {
  	ps = appres.login_macro;
@@ -9,7 +9,7 @@
 +     * Do NOT suppress login macro with -expresslogon.
 +     * The login macro may be needed to send the "elf applid" command
 +     * that PCOMM sends to activate certificate-based authentication.
-+     * 
++     *
 +     * PCOMM shows that the ELF command must be sent as a 3270 screen
 +     * command after connection, which requires a login macro.
 +     */
