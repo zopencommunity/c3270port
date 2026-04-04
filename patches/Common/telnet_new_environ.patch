@@ -1,5 +1,5 @@
 --- a/Common/telnet_new_environ.c.orig	2026-04-02 20:53:59
-+++ b/Common/telnet_new_environ.c	2026-04-02 21:16:32
++++ b/Common/telnet_new_environ.c	2026-04-04 02:35:00
 @@ -217,6 +217,16 @@
      environ_clear(&vars);
      environ_clear(&uservars);
@@ -28,8 +28,8 @@
 -    ibmapplid = getenv(IBMAPPLID_VARNAME);
 -    if (ibmapplid == NULL) {
 -	ibmapplid = IBMAPPLID_NONE;
-+    /* Set IBMELF only when Express Logon is requested. */
-+    if (appres.express_logon || appres.ibm_applid != NULL) {
++    /* Set IBMELF only when Express Logon is explicitly requested. */
++    if (appres.express_logon) {
 +        add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
 +        vtrace("Express Logon: USER=%s IBMAPPLID=%s\n",
 +            user ? user : "(none)", ibmapplid);
@@ -43,7 +43,7 @@
      vb_appendf(&trace_out, "%s %s %s", cmd(SB), opt(TELOPT_NEW_ENVIRON),
  	    telquals[TELQUAL_IS]);
 +    /* For Express Logon, always send USER first (even if not requested). */
-+    if (appres.express_logon || appres.ibm_applid != NULL) {
++    if (appres.express_logon) {
 +	environ_t *user_value = find_environ(&vars, USER_VARNAME,
 +		strlen(USER_VARNAME));
 +	if (user_value != NULL) {
@@ -85,3 +85,5 @@
 +    register_extended_toggle(ResIbmApplId, toggle_string, NULL, NULL, (void **)&appres.ibm_applid, XRM_STRING);
 +    register_extended_toggle(ResExpressLogon, toggle_express_logon, NULL, NULL, (void **)&appres.express_logon, XRM_BOOLEAN);
  }
+
+# Made with Bob
