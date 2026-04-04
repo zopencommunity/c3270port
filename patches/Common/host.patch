@@ -1,17 +1,18 @@
-diff --git a/Common/host.c b/Common/host.c
-index 0510d38..eff0f49 100644
---- a/Common/host.c
-+++ b/Common/host.c
-@@ -687,6 +687,13 @@ host_connect(const char *n, enum iaction ia)
+--- host.c.orig	2024-01-01 00:00:00.000000000 +0000
++++ host.c	2026-04-04 00:00:00.000000000 +0000
+@@ -687,6 +687,16 @@
      if (ps == NULL) {
  	ps = appres.login_macro;
      }
 +
-+    /* Do not run the login macro if Express Logon is active. */
-+    if (appres.express_logon) {
-+        ps = NULL;
-+        vtrace("Express Logon active: suppressing login macro.\n");
-+    }
++    /*
++     * Do NOT suppress login macro with -expresslogon.
++     * The login macro may be needed to send the "elf applid" command
++     * that PCOMM sends to activate certificate-based authentication.
++     * 
++     * PCOMM shows that the ELF command must be sent as a 3270 screen
++     * command after connection, which requires a login macro.
++     */
 +
      if (ps != NULL) {
  	login_macro(ps);
