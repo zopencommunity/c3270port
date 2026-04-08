@@ -1,0 +1,15 @@
+diff --git a/Common/x3270if.c b/Common/x3270if.c
+index 405a147..713b91f 100644
+--- a/Common/x3270if.c
++++ b/Common/x3270if.c
+@@ -60,6 +60,10 @@
+ # include <arpa/inet.h>
+ #endif /*]*/
+ 
++#ifdef __MVS__
++#  include <termios.h>
++#endif
++
+ #if !defined(_WIN32) /*[*/
+ # if defined(HAVE_NCURSESW_NCURSES_H) /*[*/
+ #  include <ncursesw/ncurses.h>
