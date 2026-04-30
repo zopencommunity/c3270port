@@ -5,8 +5,8 @@ C3270_SVERSION="$(echo $C3270_VERSION | cut -d 'g' -f 1)"
 export ZOPEN_CATEGORIES="utilities"
 export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3270_VERSION}/suite3270-${C3270_VERSION}-src.tgz"
 
-rm "suite3270-${C3270_VERSION}-src"
-ln -s "suite3270-${C3270_SVERSION}"  "suite3270-${C3270_VERSION}-src"
+rm -f "suite3270-${C3270_VERSION}-src"
+ln -sfn "suite3270-${C3270_SVERSION}" "suite3270-${C3270_VERSION}-src"
 export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
 export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less check_python"
@@ -31,14 +31,14 @@ zopen_check_results()
   echo "expectedTotalTests:1"
 }
 
-zopen_append_to_env()
-{
+zopen_append_to_env() {
   # echo envars outside of PATH, MANPATH, LIBPATH
+  return
 }
 
-zopen_append_to_setup()
-{
+zopen_append_to_setup() {
   # echo commands that will run when installing via setup.sh
+  return
 }
 
 zopen_get_version()
