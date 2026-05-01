@@ -1,3 +1,3 @@
 ## Description of patches
 
-No patches required!
+termios.h header patch is needed!
