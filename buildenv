@@ -6,7 +6,7 @@ export ZOPEN_CATEGORIES="utilities"
 export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3270_VERSION}/suite3270-${C3270_VERSION}-src.tgz"
 
 rm -f "suite3270-${C3270_VERSION}-src"
-ln -sfn "suite3270-${C3270_SVERSION}" "suite3270-${C3270_VERSION}-src"
+ln -sf "suite3270-${C3270_SVERSION}" "suite3270-${C3270_VERSION}-src"
 export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
 export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less check_python"

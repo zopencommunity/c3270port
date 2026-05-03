@@ -6,3 +6,4 @@ testing/*.o
 testing/newiosvctest
 testing/__pycache__/
 .zdx.json
+analysis/
