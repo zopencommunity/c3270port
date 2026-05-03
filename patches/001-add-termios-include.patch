@@ -1,0 +1,12 @@
+diff --git a/Common/x3270if.c b/Common/x3270if.c
+index 405a147..e527b60 100644
+--- a/Common/x3270if.c
++++ b/Common/x3270if.c
+@@ -58,6 +58,7 @@
+ # include <sys/un.h>
+ # include <netinet/in.h>
+ # include <arpa/inet.h>
++# include <termios.h>
+ #endif /*]*/
+ 
+ #if !defined(_WIN32) /*[*/
