@@ -7,5 +7,7 @@ testing/newiosvctest
 testing/__pycache__/
 .zdx.json
 analysis/
+Option-Analysis/
+obsolete/
 .host.yaml
 .zoslib_hooks/*
