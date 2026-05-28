@@ -1,0 +1,21 @@
+diff --git a/Common/glue.c b/Common/glue.c
+index 92578b7..ec5dea1 100644
+--- a/Common/glue.c
++++ b/Common/glue.c
+@@ -487,6 +487,7 @@ set_appres_defaults(void)
+     appres.tls992 = true;
+     appres.extended_data_stream = true;
+ 
++    appres.elf = NULL; 
+     /* Let the product set the ones it wants. */
+     product_set_appres_defaults();
+ }
+@@ -508,6 +509,8 @@ static opt_t base_opts[] = {
+     "<path>", "Pathname of the security cookie file" },
+ { OptDevName,  OPT_STRING,  false, ResDevName,   aoffset(devname),
+     "<name>", "Device name (workstation ID) for RFC 4777" },
++{ OptElf,  OPT_STRING,  false, ResElf,   aoffset(elf),
++    "<appl-id>", "ELF (Express Logon Facility) application ID" },
+ #if defined(LOCAL_PROCESS) /*[*/
+ { OptLocalProcess,OPT_SKIP2,false, NULL,         NULL,
+     "<command> [<arg>...]", "Run <command> instead of making TELNET connection"

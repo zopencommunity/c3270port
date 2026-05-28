@@ -7,3 +7,5 @@ testing/newiosvctest
 testing/__pycache__/
 .zdx.json
 analysis/
+.host.yaml
+.zoslib_hooks/*
