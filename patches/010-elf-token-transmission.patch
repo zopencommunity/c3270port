@@ -1,0 +1,94 @@
+diff --git a/Common/glue.c b/Common/glue.c
+index 92578b7..e445b3b 100644
+--- a/Common/glue.c
++++ b/Common/glue.c
+@@ -490,6 +490,89 @@ set_appres_defaults(void)
+     /* Let the product set the ones it wants. */
+     product_set_appres_defaults();
+ }
++/*
++ * Validate ELF Application ID.
++ * Returns true if valid, false otherwise.
++ */
++static bool
++validate_elf_applid(const char *applid)
++{
++    size_t len;
++    size_t i;
++
++    if (applid == NULL) {
++	return false;
++    }
++
++    /* Check length (max 8 characters for mainframe applications) */
++    len = strlen(applid);
++    if (len == 0) {
++	xs_warning("ELF Application ID cannot be empty");
++	return false;
++    }
++    if (len > 8) {
++	xs_warning("ELF Application ID too long (max 8 characters): %s", applid);
++	return false;
++    }
++
++    /* Check for valid characters (alphanumeric only) */
++    for (i = 0; i < len; i++) {
++	if (!isalnum((unsigned char)applid[i])) {
++	    xs_warning("ELF Application ID must contain only alphanumeric characters: %s", applid);
++	    return false;
++	}
++    }
++
++    return true;
++}
++
++/*
++ * Send an ELF token to the host.
++ * Converts the token to UCS-4, sends it, and presses Enter.
++ */
++void
++send_elf_token(const char *token)
++{
++    size_t len = strlen(token);
++    ucs4_t *ucs_token = (ucs4_t *)Malloc(len * sizeof(ucs4_t));
++    size_t i;
++
++    /* Convert ASCII token to UCS-4 */
++    for (i = 0; i < len; i++) {
++	ucs_token[i] = (ucs4_t)token[i];
++    }
++
++    /* Send token and press Enter */
++    emulate_uinput(ucs_token, len, false);
++    Free(ucs_token);
++    key_AID(AID_ENTER);
++}
++
++/*
++ * Initialize ELF support.
++ * Called during connection initialization.
++ */
++void
++elf_init(void)
++{
++    const char *elf_applid = appres.elf;
++
++    /* If no ELF Application ID, state remains ELF_DISABLED (default) */
++    if (elf_applid == NULL || *elf_applid == '\0') {
++	return;
++    }
++
++    /* If invalid ELF Application ID, state remains ELF_DISABLED */
++    if (!validate_elf_applid(elf_applid)) {
++	popup_an_error("Invalid ELF Application ID: must be 1-8 alphanumeric characters");
++	return;
++    }
++
++    /* Valid ELF Application ID - enable automatic authentication */
++    vtrace("ELF Application ID: %s\n", elf_applid);
++    elf_enable_processing();
++}
++
+ 
+ #define PR3287_NAME	"pr3287"
+ 
