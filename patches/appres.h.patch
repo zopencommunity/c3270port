@@ -1,10 +1,12 @@
---- suite3270-4.4/include/appres.h	2026-05-28 20:25:48
-+++ appres.h.orig	2026-05-28 20:26:30
+--- include/appres.h
++++ include/appres.h
 @@ -57,6 +57,7 @@
      bool	 debug_tracing;
      char	*devname;	/* for 5250 */
      bool	 disconnect_clear;
-+    char  *elf; /* ELF application ID */
++    char	*elf;		/* ELF application ID */
      bool	 extended_data_stream;
      char	*ft_command;
  #if defined(_WIN32) /*[*/
+
+# Made with Bob
