@@ -1,5 +1,5 @@
 diff --git a/Common/glue.c b/Common/glue.c
-index 92578b7..4bd254a 100644
+index 92578b7..7cc4670 100644
 --- a/Common/glue.c
 +++ b/Common/glue.c
 @@ -487,9 +487,92 @@ set_appres_defaults(void)
@@ -95,12 +95,12 @@ index 92578b7..4bd254a 100644
  
  #define PR3287_NAME	"pr3287"
  
-@@ -507,6 +590,8 @@ static opt_t base_opts[] = {
- { OptCookieFile, OPT_STRING,false,ResCookieFile,aoffset(cookie_file),
+@@ -508,6 +591,8 @@ static opt_t base_opts[] = {
      "<path>", "Pathname of the security cookie file" },
  { OptDevName,  OPT_STRING,  false, ResDevName,   aoffset(devname),
+     "<name>", "Device name (workstation ID) for RFC 4777" },
 +{ OptElf,  OPT_STRING,  false, ResElf,   aoffset(elf),
 +    "<appl-id>", "ELF (Express Logon Facility) application ID" },
-     "<name>", "Device name (workstation ID) for RFC 4777" },
  #if defined(LOCAL_PROCESS) /*[*/
  { OptLocalProcess,OPT_SKIP2,false, NULL,         NULL,
+     "<command> [<arg>...]", "Run <command> instead of making TELNET connection"
