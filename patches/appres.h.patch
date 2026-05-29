@@ -1,6 +1,8 @@
---- include/appres.h
-+++ include/appres.h
-@@ -57,6 +57,7 @@
+diff --git a/include/appres.h b/include/appres.h
+index 5479bf6..5a88183 100644
+--- a/include/appres.h
++++ b/include/appres.h
+@@ -57,6 +57,7 @@ typedef struct {
      bool	 debug_tracing;
      char	*devname;	/* for 5250 */
      bool	 disconnect_clear;
@@ -8,5 +10,3 @@
      bool	 extended_data_stream;
      char	*ft_command;
  #if defined(_WIN32) /*[*/
-
-# Made with Bob
