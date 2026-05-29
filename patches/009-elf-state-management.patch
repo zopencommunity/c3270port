@@ -1,0 +1,12 @@
+diff --git a/Common/task.c b/Common/task.c
+index 36ec92e..ffb0889 100644
+--- a/Common/task.c
++++ b/Common/task.c
+@@ -61,6 +61,7 @@
+ #include "ctlrc.h"
+ #include "unicodec.h"
+ #include "ft.h"
++#include "glue.h"
+ #include "host.h"
+ #include "idle.h"
+ #include "kybd.h"
