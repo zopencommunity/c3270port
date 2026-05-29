@@ -1,21 +1,38 @@
 diff --git a/Common/glue.c b/Common/glue.c
-index 92578b7..ec5dea1 100644
+index e445b3b..89858e3 100644
 --- a/Common/glue.c
 +++ b/Common/glue.c
-@@ -487,6 +487,7 @@ set_appres_defaults(void)
-     appres.tls992 = true;
-     appres.extended_data_stream = true;
+@@ -528,24 +528,22 @@ validate_elf_applid(const char *applid)
  
-+    appres.elf = NULL; 
-     /* Let the product set the ones it wants. */
-     product_set_appres_defaults();
+ /*
+  * Send an ELF token to the host.
+- * Converts the token to UCS-4, sends it, and presses Enter.
++ * Sends the token string followed by Enter.
+  */
+ void
+ send_elf_token(const char *token)
+ {
++    char *token_with_enter;
+     size_t len = strlen(token);
+-    ucs4_t *ucs_token = (ucs4_t *)Malloc(len * sizeof(ucs4_t));
+-    size_t i;
+ 
+-    /* Convert ASCII token to UCS-4 */
+-    for (i = 0; i < len; i++) {
+-	ucs_token[i] = (ucs4_t)token[i];
+-    }
++    /* Allocate space for token + newline + null terminator */
++    token_with_enter = (char *)Malloc(len + 2);
++    strcpy(token_with_enter, token);
++    strcat(token_with_enter, "\n");
+ 
+-    /* Send token and press Enter */
+-    emulate_uinput(ucs_token, len, false);
+-    Free(ucs_token);
+-    key_AID(AID_ENTER);
++    /* Send token with Enter (newline triggers Enter) */
++    emulate_input(token_with_enter, len + 1, false, false);
++    Free(token_with_enter);
  }
-@@ -508,6 +509,8 @@ static opt_t base_opts[] = {
-     "<path>", "Pathname of the security cookie file" },
- { OptDevName,  OPT_STRING,  false, ResDevName,   aoffset(devname),
-     "<name>", "Device name (workstation ID) for RFC 4777" },
-+{ OptElf,  OPT_STRING,  false, ResElf,   aoffset(elf),
-+    "<appl-id>", "ELF (Express Logon Facility) application ID" },
- #if defined(LOCAL_PROCESS) /*[*/
- { OptLocalProcess,OPT_SKIP2,false, NULL,         NULL,
-     "<command> [<arg>...]", "Run <command> instead of making TELNET connection"
+ 
+ /*
