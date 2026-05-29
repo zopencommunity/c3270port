@@ -1,5 +1,5 @@
 diff --git a/Common/task.c b/Common/task.c
-index 36ec92e..ffb0889 100644
+index 36ec92e..28da15e 100644
 --- a/Common/task.c
 +++ b/Common/task.c
 @@ -61,6 +61,7 @@
@@ -10,3 +10,15 @@ index 36ec92e..ffb0889 100644
  #include "host.h"
  #include "idle.h"
  #include "kybd.h"
+@@ -3830,6 +3831,11 @@ task_host_output(void)
+ 	    send_elf_token(")PSS.WD(");
+ 	    elf_state = ELF_COMPLETE;
+ 	    break;
++	default:
++	    /* Should never reach here due to if condition above */
++	    vtrace("ELF: Invalid state %d\n", elf_state);
++	    elf_state = ELF_DISABLED;
++	    break;
+ 	}
+     }
+ }
