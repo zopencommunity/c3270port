@@ -1,0 +1,54 @@
+diff --git a/Common/telnet.c b/Common/telnet.c
+index 6b07b03..7a47fb0 100644
+--- a/Common/telnet.c
++++ b/Common/telnet.c
+@@ -2115,12 +2115,21 @@ tn3270e_request(void)
+     char *tt_out;
+     char *t;
+     char *xtn;
++    const char *connect_name = NULL;
+ 
+     /* Always use 3278, per the RFC. */
+     xtn = create_3270_termtype(true);
+     tt_len = strlen(xtn);
+-    if (try_lu != NULL && *try_lu) {
+-	tt_len += strlen(try_lu) + 1;
++    
++    /* Determine what to send in CONNECT field */
++    if (appres.elf != NULL && *appres.elf) {
++        /* ELF Application ID takes precedence */
++        connect_name = appres.elf;
++        tt_len += strlen(connect_name) + 1;
++    } else if (try_lu != NULL && *try_lu) {
++        /* Fall back to LU name if no ELF */
++        connect_name = try_lu;
++        tt_len += strlen(connect_name) + 1;
+     }
+ 
+     tb_len = 5 + tt_len + 2;
+@@ -2130,8 +2139,8 @@ tn3270e_request(void)
+ 	IAC, SB, TELOPT_TN3270E, TN3270E_OP_DEVICE_TYPE, TN3270E_OP_REQUEST,
+ 	force_ascii(xtn));
+ 
+-    if (try_lu != NULL && *try_lu) {
+-	t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(try_lu));
++    if (connect_name != NULL) {
++	t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(connect_name));
+     }
+ 
+     sprintf(t, "%c%c", IAC, SE);
+@@ -2139,10 +2148,11 @@ tn3270e_request(void)
+     net_hexnvt_out_framed((unsigned char *)tt_out, tb_len, true);
+     Free(tt_out);
+ 
+-    vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s %s\n",
++    vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s%s %s\n",
+ 	cmd(SB), opt(TELOPT_TN3270E), xtn,
+-	(try_lu != NULL && *try_lu)? " CONNECT ": "",
+-	(try_lu != NULL && *try_lu)? try_lu: "",
++	(connect_name != NULL)? " CONNECT ": "",
++	(appres.elf != NULL && *appres.elf)? "(ELF) ": "",
++	(connect_name != NULL)? connect_name: "",
+ 	cmd(SE));
+ 
+     Free(xtn);

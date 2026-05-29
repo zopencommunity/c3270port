@@ -1,0 +1,15 @@
+diff --git a/Common/host.c b/Common/host.c
+index 0510d38..2d353a2 100644
+--- a/Common/host.c
++++ b/Common/host.c
+@@ -642,6 +642,10 @@ host_connect(const char *n, enum iaction ia)
+     /* Attempt contact. */
+     host_retry_mode = appres.reconnect || appres.retry;
+     ever_3270 = false;
++    
++    /* Initialize ELF support */
++    elf_init();
++    
+     nc = net_connect(chost, port, accept, localprocess_cmd != NULL, &net_sock);
+     if (port != appres.port) {
+ 	Replace(port, NULL);
