@@ -1,8 +1,8 @@
 diff --git a/Common/telnet.c b/Common/telnet.c
-index 6b07b03..22db11f 100644
+index 6b07b03..e63b230 100644
 --- a/Common/telnet.c
 +++ b/Common/telnet.c
-@@ -2115,23 +2115,38 @@ tn3270e_request(void)
+@@ -2115,23 +2115,31 @@ tn3270e_request(void)
      char *tt_out;
      char *t;
      char *xtn;
@@ -16,11 +16,10 @@ index 6b07b03..22db11f 100644
 +    
 +    /* Determine what to send in CONNECT field */
 +    if (appres.elf != NULL && *appres.elf) {
-+        /* ELF Application ID takes precedence - add "(ELF) " prefix */
-+        connect_name = appres.elf;
-+        tt_len += strlen("(ELF) ") + strlen(connect_name) + 1;
++        /* ELF mode: Don't send CONNECT field - let server determine from certificate */
++        connect_name = NULL;
 +    } else if (try_lu != NULL && *try_lu) {
-+        /* Fall back to LU name if no ELF */
++        /* Regular mode: Send LU name in CONNECT field */
 +        connect_name = try_lu;
 +        tt_len += strlen(connect_name) + 1;
      }
@@ -37,17 +36,11 @@ index 6b07b03..22db11f 100644
 -    if (try_lu != NULL && *try_lu) {
 -	t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(try_lu));
 +    if (connect_name != NULL) {
-+        if (appres.elf != NULL && *appres.elf) {
-+            /* Send ELF Application ID with "(ELF) " prefix */
-+            t += sprintf(t, "%c(ELF) %s", TN3270E_OP_CONNECT, force_ascii(connect_name));
-+        } else {
-+            /* Send regular LU name */
-+            t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(connect_name));
-+        }
++ t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(connect_name));
      }
  
      sprintf(t, "%c%c", IAC, SE);
-@@ -2139,10 +2154,11 @@ tn3270e_request(void)
+@@ -2139,10 +2147,11 @@ tn3270e_request(void)
      net_hexnvt_out_framed((unsigned char *)tt_out, tb_len, true);
      Free(tt_out);
  
