@@ -1,8 +1,13 @@
 diff --git a/Common/glue.c b/Common/glue.c
-index 92578b7..89858e3 100644
+index 92578b7..4bd254a 100644
 --- a/Common/glue.c
 +++ b/Common/glue.c
-@@ -490,6 +490,87 @@ set_appres_defaults(void)
+@@ -487,9 +487,92 @@ set_appres_defaults(void)
+     appres.tls992 = true;
+     appres.extended_data_stream = true;
+ 
++    appres.elf = NULL;
++
      /* Let the product set the ones it wants. */
      product_set_appres_defaults();
  }
@@ -90,3 +95,12 @@ index 92578b7..89858e3 100644
  
  #define PR3287_NAME	"pr3287"
  
+@@ -507,6 +590,8 @@ static opt_t base_opts[] = {
+ { OptCookieFile, OPT_STRING,false,ResCookieFile,aoffset(cookie_file),
+     "<path>", "Pathname of the security cookie file" },
+ { OptDevName,  OPT_STRING,  false, ResDevName,   aoffset(devname),
++{ OptElf,  OPT_STRING,  false, ResElf,   aoffset(elf),
++    "<appl-id>", "ELF (Express Logon Facility) application ID" },
+     "<name>", "Device name (workstation ID) for RFC 4777" },
+ #if defined(LOCAL_PROCESS) /*[*/
+ { OptLocalProcess,OPT_SKIP2,false, NULL,         NULL,
