@@ -1,8 +1,8 @@
 diff --git a/Common/telnet.c b/Common/telnet.c
-index 6b07b03..7a47fb0 100644
+index 6b07b03..22db11f 100644
 --- a/Common/telnet.c
 +++ b/Common/telnet.c
-@@ -2115,12 +2115,21 @@ tn3270e_request(void)
+@@ -2115,23 +2115,38 @@ tn3270e_request(void)
      char *tt_out;
      char *t;
      char *xtn;
@@ -16,9 +16,9 @@ index 6b07b03..7a47fb0 100644
 +    
 +    /* Determine what to send in CONNECT field */
 +    if (appres.elf != NULL && *appres.elf) {
-+        /* ELF Application ID takes precedence */
++        /* ELF Application ID takes precedence - add "(ELF) " prefix */
 +        connect_name = appres.elf;
-+        tt_len += strlen(connect_name) + 1;
++        tt_len += strlen("(ELF) ") + strlen(connect_name) + 1;
 +    } else if (try_lu != NULL && *try_lu) {
 +        /* Fall back to LU name if no ELF */
 +        connect_name = try_lu;
@@ -26,18 +26,28 @@ index 6b07b03..7a47fb0 100644
      }
  
      tb_len = 5 + tt_len + 2;
-@@ -2130,8 +2139,8 @@ tn3270e_request(void)
- 	IAC, SB, TELOPT_TN3270E, TN3270E_OP_DEVICE_TYPE, TN3270E_OP_REQUEST,
- 	force_ascii(xtn));
+     tt_out = Malloc(tb_len + 1);
+     t = tt_out;
+     t += sprintf(tt_out, "%c%c%c%c%c%s",
+-	IAC, SB, TELOPT_TN3270E, TN3270E_OP_DEVICE_TYPE, TN3270E_OP_REQUEST,
+-	force_ascii(xtn));
++ IAC, SB, TELOPT_TN3270E, TN3270E_OP_DEVICE_TYPE, TN3270E_OP_REQUEST,
++ force_ascii(xtn));
  
 -    if (try_lu != NULL && *try_lu) {
 -	t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(try_lu));
 +    if (connect_name != NULL) {
-+	t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(connect_name));
++        if (appres.elf != NULL && *appres.elf) {
++            /* Send ELF Application ID with "(ELF) " prefix */
++            t += sprintf(t, "%c(ELF) %s", TN3270E_OP_CONNECT, force_ascii(connect_name));
++        } else {
++            /* Send regular LU name */
++            t += sprintf(t, "%c%s", TN3270E_OP_CONNECT, force_ascii(connect_name));
++        }
      }
  
      sprintf(t, "%c%c", IAC, SE);
-@@ -2139,10 +2148,11 @@ tn3270e_request(void)
+@@ -2139,10 +2154,11 @@ tn3270e_request(void)
      net_hexnvt_out_framed((unsigned char *)tt_out, tb_len, true);
      Free(tt_out);
  
