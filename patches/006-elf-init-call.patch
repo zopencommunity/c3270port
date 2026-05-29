@@ -2,7 +2,15 @@ diff --git a/Common/host.c b/Common/host.c
 index 0510d38..2d353a2 100644
 --- a/Common/host.c
 +++ b/Common/host.c
-@@ -642,6 +642,10 @@ host_connect(const char *n, enum iaction ia)
+@@ -40,6 +40,7 @@
+ #include <limits.h>
+ #include "actions.h"
+ #include "boolstr.h"
++#include "glue.h"
+ #include "glue_gui.h"
+ #include "host.h"
+ #include "host_gui.h"
+@@ -642,6 +643,10 @@ host_connect(const char *n, enum iaction ia)
      /* Attempt contact. */
      host_retry_mode = appres.reconnect || appres.retry;
      ever_3270 = false;
@@ -13,3 +21,5 @@ index 0510d38..2d353a2 100644
      nc = net_connect(chost, port, accept, localprocess_cmd != NULL, &net_sock);
      if (port != appres.port) {
  	Replace(port, NULL);
+
+# Made with Bob
