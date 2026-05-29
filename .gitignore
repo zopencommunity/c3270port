@@ -11,3 +11,4 @@ Option-Analysis/
 obsolete/
 .host.yaml
 .zoslib_hooks/*
+backup/
