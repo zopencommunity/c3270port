@@ -1,0 +1,282 @@
+20260529.162302.370 Trace started
+ Version: c3270 v4.4ga6 Fri May 29 17:43:17 UTC 2026 FULTONM
+ Build options: --enable-local-process --without-readline --with-curses-wide --with-iconv via gcc IBM C/C++ for Open Enterprise Languages on z/OS 3.0.0, Clang 21.1.1 (build c8f07ab) 64-bit
+ Command: c3270 c3270 -trace -model 2 -secure -elf TSOVS01 -port 992 -cafile /u/fultonm/Certificates/STD1_server.pem -certfile /u/fultonm/Certificates/fultonm_cert.pem -keyfile /u/fultonm/Certificates/fultonm_key.pem STD1
+ Model 3279-2-E, 24 rows x 80 cols, color display, extended data stream, color emulation, code page bracket
+ Locale codeset: ISO8859-1
+ Host codepage: 37
+ Settings: acceptHostname= aidWait=true alwaysInsert=false bindLimit=true
+  blankFill=true caDir= caFile=/u/fultonm/Certificates/STD1_server.pem
+  certFile=/u/fultonm/Certificates/fultonm_cert.pem certFileType= chainFile=
+  codePage=bracket
+  confDir=/usr/local/sandboxes/fultonm/zopen/usr/local/zopen/c3270/c3270-DEV/etc/x3270
+  contentionResolution=true crosshair=false devName= extendedDataStream=true
+  ftBufferSize=16384 httpd= insertMode=false
+  keyFile=/u/fultonm/Certificates/fultonm_key.pem keyFileType= keyPasswd=
+  lineMode=true lineWrap=false loginMacro= model=3279-2-E monoCase=false
+  noTelnetInputMode=line nopSeconds=0 oerrLock=true oversize= preferIpv4=false
+  preferIpv6=false printer.options= printerLu= proxy= reconnect=false
+  retry=false reverseInputMode=false rightToLeftMode=false rpq= saveLines=4096
+  screenTrace=false scriptPort= showTiming=false startTls=true termName=
+  tls992=true tlsMaxProtocol= tlsMinProtocol= tlsSecurityLevel= trace=true
+  typeahead=true underscore=false underscoreBlankFill=true unlockDelay=false
+  unlockDelayMs=350 user= verifyHostCert=true visibleControl=false
+  wrongTerminalName=false
+ Connection state: not-connected
+ Data stream:
+20260529.162302.370 CB(command)[#1] started
+20260529.162302.370 CB(command)[#1.1] IDLE -> RUNNING (child task to be pushed next)
+20260529.162302.370 Macro[#1.2] IDLE -> RUNNING (fresh push)
+20260529.162302.375 ctlr_enable_cursor(true, scroll)
+20260529.162302.382 Macro[#1.2] RUNNING -> IDLE (about to resume)
+20260529.162302.382 Macro[#1.2] running
+20260529.162302.382 Macro[#1.2] IDLE -> RUNNING (executing)
+20260529.162302.382 Macro[#1.2] 'Connect("STD1")'
+20260529.162302.382 command -> Connect("STD1")
+20260529.162302.382 ELF Application ID: TSOVS01
+20260529.162302.382 st_changed(secure,false)
+20260529.162302.399 TLS: will verify host certificate
+20260529.162302.401 Making host socket non-blocking
+20260529.162302.401 Trying 9.47.80.126, port 992...
+20260529.162302.401 Connected to STD1, port 992.
+20260529.162302.401 cstate [not-connected] -> [tls-pending] (net_connected)
+20260529.162302.401 st_changed(connect,true)
+20260529.162302.401 Keyboard unlock(kybd_connect) NOT_CONNECTED -NOT_CONNECTED -> none
+20260529.162302.401 Keyboard lock(kybd_connect) none +AWAITING_FIRST -> AWAITING_FIRST
+20260529.162302.405 ctlr_enable_cursor(true, connect)
+20260529.162302.405 ctlr_enable_cursor(true, nvt)
+20260529.162302.405 st_changed(negotiating,true)
+20260529.162302.405 Starting OpenSSL negotiation, host 'STD1'.
+20260529.162302.405 SSL_connect trace: PINIT before SSL initialization
+20260529.162302.406 SSL_connect trace: TWCH SSLv3/TLS write client hello
+20260529.162302.406 Need more TLS data
+20260529.162302.410 Macro[#1.2] RUNNING -> KBWAIT (keyboard locked)
+20260529.162302.414 sched: Waiting for 5 events or 0.990 sec
+20260529.162302.427 sched: Got 1 fd, 2 events
+20260529.162302.427 Continuing OpenSSL negotiation, host 'STD1'.
+20260529.162302.427 SSL_connect trace: TWCH SSLv3/TLS write client hello
+20260529.162302.427 SSL_connect trace: TRSH SSLv3/TLS read server hello
+20260529.162302.427 SSL_connect trace: TRSC SSLv3/TLS read server certificate
+20260529.162302.428 SSL_connect trace: TRSKE SSLv3/TLS read server key exchange
+20260529.162302.428 SSL_connect trace: TRCR SSLv3/TLS read server certificate request
+20260529.162302.428 SSL_connect trace: TRSD SSLv3/TLS read server done
+20260529.162302.428 SSL_connect trace: TWCC SSLv3/TLS write client certificate
+20260529.162302.433 SSL_connect trace: TWCKE SSLv3/TLS write client key exchange
+20260529.162302.455 SSL_connect trace: TWCV SSLv3/TLS write certificate verify
+20260529.162302.455 SSL_connect trace: TWCCS SSLv3/TLS write change cipher spec
+20260529.162302.455 SSL_connect trace: TWFIN SSLv3/TLS write finished
+20260529.162302.455 Need more TLS data
+20260529.162302.455 txflush: 65 slots
+20260529.162302.460 sched: Waiting for 5 events or 0.945 sec
+20260529.162302.460 sched: Got 1 fd, 2 events
+20260529.162302.460 Continuing OpenSSL negotiation, host 'STD1'.
+20260529.162302.460 SSL_connect trace: TWFIN SSLv3/TLS write finished
+20260529.162302.460 SSL_connect trace: TRCCS SSLv3/TLS read change cipher spec
+20260529.162302.460 SSL_connect trace: TRFIN SSLv3/TLS read finished
+20260529.162302.460 Connection is now secure.
+20260529.162302.460 Provider: OpenSSL 3.6.0 1 Oct 2025
+20260529.162302.460 Session:
+20260529.162302.460  Version: TLSv1.2
+20260529.162302.460  Cipher: ECDHE-RSA-AES128-GCM-SHA256
+20260529.162302.460  Security level: 2
+20260529.162302.460 Server certificate:
+20260529.162302.460  Public key: 2048 bit RSA
+20260529.162302.460  Subject: O = z/OS, OU = TN3270 Server, CN = STD1
+20260529.162302.460  Issuer: O = z/OS, OU = TN3270 Server, CN = STD1
+20260529.162302.461 st_changed(secure,true)
+20260529.162302.461 cstate [tls-pending] -> [telnet-pending] (host_connected)
+20260529.162302.461 st_changed(negotiating,true)
+20260529.162302.461 st_changed(secure,false)
+20260529.162302.461 st_changed(line-mode,true)
+20260529.162302.461 txflush: 13 slots
+20260529.162302.465 sched: Waiting for 5 events or 0.995 sec
+20260529.162302.465 sched: Got 1 fd, 2 events
+20260529.162302.465 Reading host socket via TLS
+20260529.162302.465 Host socket read complete nr=3
+< 0x0   fffd28
+20260529.162302.465 RCVD DO TN3270E
+> 0x0   fffb28
+20260529.162302.465 SENT WILL TN3270E
+20260529.162302.465 Now operating in connected-unbound mode.
+20260529.162302.465 cstate [telnet-pending] -> [connected-unbound] (host_in3270)
+20260529.162302.465 st_changed(negotiating,true)
+20260529.162302.465 st_changed(3270-mode,false)
+20260529.162302.465 Host negotiation step took 0.000025s to complete
+20260529.162302.465 ctlr_enable_cursor(true, connect)
+20260529.162302.465 txflush: 13 slots
+20260529.162302.470 sched: Waiting for 5 events
+20260529.162302.470 sched: Got 1 fd, 2 events
+20260529.162302.470 Reading host socket via TLS
+20260529.162302.470 Host socket read complete nr=7
+< 0x0   fffa280802fff0
+20260529.162302.470 RCVD SB TN3270E SEND DEVICE-TYPE SE
+> 0x0   fffa28020749424d2d333237382d322d450128454c46292054534f56533031ff
+> 0x20  f0
+20260529.162302.471 SENT SB TN3270E DEVICE-TYPE REQUEST IBM-3278-2-E CONNECT (ELF) TSOVS01 SE
+20260529.162302.475 sched: Waiting for 5 events
+20260529.162302.475 sched: Got 1 fd, 2 events
+20260529.162302.475 Reading host socket via TLS
+20260529.162302.475 Host socket read complete nr=9
+< 0x0   fffa2802060503fff0
+20260529.162302.475 RCVD SB TN3270E DEVICE-TYPE REJECT REASON INV-NAME SE
+20260529.162302.475 Aborting TN3270E: Device type rejected
+> 0x0   fffc28
+20260529.162302.475 SENT WONT TN3270E
+20260529.162302.476 Aborting TN3270E: negotiated off
+20260529.162302.476 Now operating in telnet-pending mode.
+20260529.162302.476 cstate [connected-unbound] -> [telnet-pending] (host_in3270)
+20260529.162302.476 st_changed(negotiating,true)
+20260529.162302.476 txflush: 11 slots
+20260529.162302.481 sched: Waiting for 5 events or 0.994 sec
+20260529.162302.481 sched: Got 1 fd, 2 events
+20260529.162302.481 Reading host socket via TLS
+20260529.162302.481 Host socket read complete nr=3
+< 0x0   fffe28
+20260529.162302.481 RCVD DONT TN3270E
+20260529.162302.485 sched: Waiting for 5 events or 0.990 sec
+20260529.162302.485 sched: Got 1 fd, 2 events
+20260529.162302.485 Reading host socket via TLS
+20260529.162302.485 Host socket read complete nr=3
+< 0x0   fffd18
+20260529.162302.485 RCVD DO TERMINAL TYPE
+> 0x0   fffb18
+20260529.162302.485 SENT WILL TERMINAL TYPE
+20260529.162302.490 sched: Waiting for 5 events or 0.985 sec
+20260529.162302.490 sched: Got 1 fd, 2 events
+20260529.162302.490 Reading host socket via TLS
+20260529.162302.490 Host socket read complete nr=6
+< 0x0   fffa1801fff0
+20260529.162302.490 RCVD SB TERMINAL TYPE SEND
+> 0x0   fffa180049424d2d333237392d322d45fff0
+20260529.162302.490 SENT SB TERMINAL TYPE IS IBM-3279-2-E SE
+20260529.162302.495 sched: Waiting for 5 events or 0.981 sec
+20260529.162302.495 sched: Got 1 fd, 2 events
+20260529.162302.495 Reading host socket via TLS
+20260529.162302.495 Host socket read complete nr=3
+< 0x0   fffd19
+20260529.162302.495 RCVD DO END OF RECORD
+> 0x0   fffb19
+20260529.162302.495 SENT WILL END OF RECORD
+20260529.162302.499 sched: Waiting for 5 events or 0.976 sec
+20260529.162302.499 sched: Got 1 fd, 2 events
+20260529.162302.499 Reading host socket via TLS
+20260529.162302.499 Host socket read complete nr=3
+< 0x0   fffb19
+20260529.162302.499 RCVD WILL END OF RECORD
+> 0x0   fffd19
+20260529.162302.499 SENT DO END OF RECORD
+20260529.162302.504 sched: Waiting for 5 events or 0.972 sec
+20260529.162302.504 sched: Got 1 fd, 2 events
+20260529.162302.504 Reading host socket via TLS
+20260529.162302.504 Host socket read complete nr=3
+< 0x0   fffd00
+20260529.162302.504 RCVD DO BINARY
+> 0x0   fffb00
+20260529.162302.504 SENT WILL BINARY
+20260529.162302.508 sched: Waiting for 5 events or 0.967 sec
+20260529.162302.508 sched: Got 1 fd, 2 events
+20260529.162302.508 Reading host socket via TLS
+20260529.162302.508 Host socket read complete nr=3
+< 0x0   fffb00
+20260529.162302.508 RCVD WILL BINARY
+> 0x0   fffd00
+20260529.162302.508 SENT DO BINARY
+20260529.162302.508 Aborting TN3270E: negotiated off
+20260529.162302.508 Now operating in connected-3270 mode.
+20260529.162302.508 cstate [telnet-pending] -> [connected-3270] (host_in3270)
+20260529.162302.509 st_changed(3270-mode,true)
+20260529.162302.509 Host negotiation step took 0.032896s to complete
+20260529.162302.509 ctlr_enable_cursor(true, connect)
+20260529.162302.509 txflush: 12 slots
+20260529.162302.513 sched: Waiting for 5 events
+20260529.162302.762 sched: Got 1 fd, 2 events
+20260529.162302.762 Reading host socket via TLS
+20260529.162302.762 Host socket read complete nr=44
+< 0x0   05c1115d7f1d401140401dc8c9d2d1f5f6f7f0f0c140c5d5e3c5d940e4e2c5d9
+< 0x20  c9c440601d4011c15013ffef
+< EraseWrite(reset,resetMDT) SetBufferAddress(24,80) StartField(default) Se ...
+... tBufferAddress(1,1) StartField(intensified) 'IKJ56700A ENTER USERID -'  ...
+... StartField(1,26)(default) SetBufferAddress(2,1) InsertCursor
+20260529.162302.767 Keyboard unlock(ctlr_write) AWAITING_FIRST -AWAITING_FIRST -> none
+20260529.162302.768  string -> Key(U+0029)
+20260529.162302.768  string -> Key(U+0055)
+20260529.162302.768  string -> Key(U+0053)
+20260529.162302.768  string -> Key(U+0052)
+20260529.162302.768  string -> Key(U+002e)
+20260529.162302.768  string -> Key(U+0049)
+20260529.162302.768  string -> Key(U+0044)
+20260529.162302.768  string -> Key(U+0028)
+20260529.162302.768 string -> Enter()
+20260529.162302.768 Keyboard lock(key_AID) none +OIA_TWAIT +OIA_LOCKED -> OIA_TWAIT OIA_LOCKED
+> Enter(2,9) SetBufferAddress(1,27) ')USR.ID('
+> 0x0   7dc1d811405a5de4e2d94bc9c44dffef
+20260529.162302.768 SENT EOR
+20260529.162302.768 RCVD EOR
+20260529.162302.768 txflush: 65 slots
+20260529.162302.772 sched: Waiting for 5 events or 0.995 sec
+20260529.162302.773 sched: Got 1 fd, 2 events
+20260529.162302.773 Reading host socket via TLS
+20260529.162302.773 Host socket read complete nr=4
+< 0x0   01c2ffef
+< Write(reset,restore)
+20260529.162302.773 Keyboard unlock(do_reset) OIA_TWAIT OIA_LOCKED -OIA_TWAIT -OIA_LOCKED -> none
+20260529.162302.773 Host operation took 0.004413s to complete
+20260529.162302.773  string -> Key(U+0029)
+20260529.162302.773  string -> Key(U+0050)
+20260529.162302.773  string -> Key(U+0053)
+20260529.162302.773  string -> Key(U+0053)
+20260529.162302.773  string -> Key(U+002e)
+20260529.162302.773  string -> Key(U+0057)
+20260529.162302.773  string -> Key(U+0044)
+20260529.162302.773  string -> Key(U+0028)
+20260529.162302.773 string -> Enter()
+20260529.162302.773 Keyboard lock(key_AID) none +OIA_TWAIT +OIA_LOCKED -> OIA_TWAIT OIA_LOCKED
+> Enter(2,17) SetBufferAddress(1,27) ')USR.ID()PSS.WD('
+> 0x0   7dc16011405a5de4e2d94bc9c44d5dd7e2e24be6c44dffef
+20260529.162302.774 SENT EOR
+20260529.162302.774 RCVD EOR
+20260529.162302.774 txflush: 43 slots
+20260529.162302.778 sched: Waiting for 5 events or 0.995 sec
+20260529.162302.778 sched: Got 1 fd, 2 events
+20260529.162302.778 Reading host socket via TLS
+20260529.162302.778 Host socket read complete nr=49
+< 0x0   01c111c2601dc8c9d2d1f5f6f7f1f0c940c9d5e5c1d3c9c440e4e2c5d9c9c46b
+< 0x20  405de4e2d94bc9c44d1d4011c3f013ffef
+< Write(reset,resetMDT) SetBufferAddress(3,1) StartField(intensified) 'IKJ5 ...
+... 6710I INVALID USERID, )USR.ID(' StartField(3,36)(default) SetBufferAddr ...
+... ess(4,1) InsertCursor
+20260529.162302.779 Keyboard unlock(ctlr_write) OIA_TWAIT OIA_LOCKED -OIA_TWAIT -> OIA_LOCKED
+20260529.162302.779 RCVD EOR
+20260529.162302.779 txflush: 49 slots
+20260529.162302.783 sched: Waiting for 5 events or 0.990 sec
+20260529.162303.019 sched: Got 1 fd, 2 events
+20260529.162303.019 Reading host socket via TLS
+20260529.162303.019 Host socket read complete nr=47
+< 0x0   01c111c5401dc8c9d2d1f5f6f7f0f3c140d9c5c5d5e3c5d940e3c8c9e240d6d7
+< 0x20  c5d9c1d5c440601d4011c65013ffef
+< Write(reset,resetMDT) SetBufferAddress(5,1) StartField(intensified) 'IKJ5 ...
+... 6703A REENTER THIS OPERAND -' StartField(5,34)(default) SetBufferAddres ...
+... s(6,1) InsertCursor
+20260529.162303.020 RCVD EOR
+20260529.162303.020 txflush: 43 slots
+20260529.162303.024 sched: Waiting for 5 events or 0.749 sec
+20260529.162303.024 sched: Got 1 fd, 2 events
+20260529.162303.024 Reading host socket via TLS
+20260529.162303.024 Host socket read complete nr=4
+< 0x0   01c2ffef
+< Write(reset,restore)
+20260529.162303.024 Keyboard unlock(do_reset) OIA_LOCKED -OIA_LOCKED -> none
+20260529.162303.024 Host operation took 0.250579s to complete
+20260529.162303.024 RCVD EOR
+20260529.162303.024 txflush: 11 slots
+20260529.162303.029 Macro[#1.2] KBWAIT -> IDLE (about to resume)
+20260529.162303.029 Macro[#1.2] running
+20260529.162303.029 Macro[#1.2] complete, success
+20260529.162303.029 CB(command)[#1.1] RUNNING -> IDLE (about to resume)
+20260529.162303.029 CB(command)[#1.1] child task done, success
+20260529.162303.029 command complete
+20260529.162303.029 stop pager
+20260529.162303.029 CB(command)[#1.1] complete, success
+20260529.162303.029 CB(command)[#1] complete
+20260529.162303.033 sched: Waiting for 5 events
+20260529.162321.405 sched: Got 1 fd, 1 event
