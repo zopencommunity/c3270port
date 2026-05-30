@@ -1,0 +1,20 @@
+--- a/suite3270-4.4/Common/telnet_new_environ.c
++++ b/suite3270-4.4/Common/telnet_new_environ.c
+@@ -237,10 +237,14 @@ new_environ_send(void)
+     /* Set IBMELF. */
+     add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
+ 
+-    /* Set IBMAPPLID, from the environment. */
+-    ibmapplid = getenv(IBMAPPLID_VARNAME);
++    /* Set IBMAPPLID, from -elf option or environment. */
++    ibmapplid = appres.elf;  /* First try -elf command line option */
++    if (ibmapplid == NULL || *ibmapplid == '\0') {
++	ibmapplid = getenv(IBMAPPLID_VARNAME);  /* Fall back to environment */
++    }
+     if (ibmapplid == NULL) {
+-	ibmapplid = IBMAPPLID_NONE;
++	ibmapplid = IBMAPPLID_NONE;  /* Default to "None" */
+     }
+     add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
+
+# Made with Bob

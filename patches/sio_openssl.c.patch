@@ -1,0 +1,20 @@
+--- a/suite3270-4.4/Common/sio_openssl.c
++++ b/suite3270-4.4/Common/sio_openssl.c
+@@ -951,6 +951,15 @@ sio_negotiate(sio_t sio, socket_t sock, const char *hostname, bool *data)
+ 	}
+ #endif /*]*/
+ 
++	/* Set SNI (Server Name Indication) for TLS handshake */
++	if (hostname != NULL && *hostname != '\0') {
++	    if (!SSL_set_tlsext_host_name(s->con, hostname)) {
++		char err_buf[1024];
++		sioc_set_error("Set SNI failed:\n%s", get_ssl_error(err_buf));
++		return SIG_FAILURE;
++	    }
++	}
++
+ 	SSL_set_verify(s->con, SSL_VERIFY_PEER, ssl_verify_callback);
+ 
+ 	/* Set up the TLS/SSL connection. */
+
+# Made with Bob

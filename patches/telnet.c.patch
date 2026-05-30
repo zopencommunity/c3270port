@@ -1,8 +1,8 @@
 diff --git a/Common/telnet.c b/Common/telnet.c
-index 6b07b03..e63b230 100644
+index 6b07b03..e616871 100644
 --- a/Common/telnet.c
 +++ b/Common/telnet.c
-@@ -2115,23 +2115,31 @@ tn3270e_request(void)
+@@ -2115,23 +2115,37 @@ tn3270e_request(void)
      char *tt_out;
      char *t;
      char *xtn;
@@ -16,7 +16,13 @@ index 6b07b03..e63b230 100644
 +    
 +    /* Determine what to send in CONNECT field */
 +    if (appres.elf != NULL && *appres.elf) {
-+        /* ELF mode: Don't send CONNECT field - let server determine from certificate */
++        /* ELF mode: Do NOT send CONNECT field
++         * With ELF (Express Logon Facility), the server assigns the LU name
++         * based on certificate authentication and sends it back in the
++         * DEVICE-TYPE IS response. The client should NOT send a CONNECT field
++         * in the DEVICE-TYPE REQUEST when using ELF.
++         * The APPLID is sent via IBMAPPLID in NEW-ENVIRON, not in CONNECT.
++         */
 +        connect_name = NULL;
 +    } else if (try_lu != NULL && *try_lu) {
 +        /* Regular mode: Send LU name in CONNECT field */
@@ -40,18 +46,18 @@ index 6b07b03..e63b230 100644
      }
  
      sprintf(t, "%c%c", IAC, SE);
-@@ -2139,10 +2147,11 @@ tn3270e_request(void)
-     net_hexnvt_out_framed((unsigned char *)tt_out, tb_len, true);
+@@ -2140,10 +2154,10 @@ tn3270e_request(void)
      Free(tt_out);
  
--    vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s %s\n",
-+    vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s%s %s\n",
- 	cmd(SB), opt(TELOPT_TN3270E), xtn,
+     vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s %s\n",
+-	cmd(SB), opt(TELOPT_TN3270E), xtn,
 -	(try_lu != NULL && *try_lu)? " CONNECT ": "",
 -	(try_lu != NULL && *try_lu)? try_lu: "",
-+	(connect_name != NULL)? " CONNECT ": "",
-+	(appres.elf != NULL && *appres.elf)? "(ELF) ": "",
-+	(connect_name != NULL)? connect_name: "",
- 	cmd(SE));
+-	cmd(SE));
++ cmd(SB), opt(TELOPT_TN3270E), xtn,
++ (connect_name != NULL)? " CONNECT ": "",
++ (connect_name != NULL)? connect_name: "",
++ cmd(SE));
  
      Free(xtn);
+ }
