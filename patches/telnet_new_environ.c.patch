@@ -1,20 +1,218 @@
---- a/suite3270-4.4/Common/telnet_new_environ.c
-+++ b/suite3270-4.4/Common/telnet_new_environ.c
-@@ -237,10 +237,14 @@ new_environ_send(void)
+diff --git a/Common/telnet_new_environ.c b/Common/telnet_new_environ.c
+index c3745aa..4083eb4 100644
+--- a/Common/telnet_new_environ.c
++++ b/Common/telnet_new_environ.c
+@@ -79,6 +79,11 @@
+ /* Statics */
+ static const char *telobjs[4] = { "VAR", "VALUE", "ESC", "USERVAR" };
+ 
++/* ELF token storage - received from z/OS */
++static char *elf_token_received = NULL;
++static size_t elf_token_length = 0;
++static char *elf_target_applid = NULL;  /* Target APPLID from -elf option */
++
+ /* An environment variable. */
+ typedef struct {
+     llist_t list;
+@@ -237,12 +242,24 @@ environ_init(void)
      /* Set IBMELF. */
      add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
  
 -    /* Set IBMAPPLID, from the environment. */
 -    ibmapplid = getenv(IBMAPPLID_VARNAME);
+-    if (ibmapplid == NULL) {
+-	ibmapplid = IBMAPPLID_NONE;
 +    /* Set IBMAPPLID, from -elf option or environment. */
 +    ibmapplid = appres.elf;  /* First try -elf command line option */
 +    if (ibmapplid == NULL || *ibmapplid == '\0') {
-+	ibmapplid = getenv(IBMAPPLID_VARNAME);  /* Fall back to environment */
++ ibmapplid = getenv(IBMAPPLID_VARNAME);  /* Fall back to environment */
 +    }
-     if (ibmapplid == NULL) {
--	ibmapplid = IBMAPPLID_NONE;
-+	ibmapplid = IBMAPPLID_NONE;  /* Default to "None" */
++    
++    if (ibmapplid != NULL && *ibmapplid != '\0') {
++ /* ELF is enabled - save target APPLID and send empty value initially */
++ /* This signals z/OS to generate and send us the token */
++ Replace(elf_target_applid, NewString(ibmapplid));
++ add_environ(&uservars, IBMAPPLID_VARNAME, "");  /* Empty string, not "None" */
++ vtrace("ELF: Initial response IBMAPPLID=<empty> (target=%s, waiting for token from z/OS)\n",
++        ibmapplid);
++    } else {
++ /* ELF not enabled */
++ add_environ(&uservars, IBMAPPLID_VARNAME, "");
++ vtrace("ELF: Not enabled, IBMAPPLID=<empty>\n");
      }
-     add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
-
-# Made with Bob
+-    add_environ(&uservars, IBMAPPLID_VARNAME, ibmapplid);
+ 
+     if (ut_getenv("NO_CODEPAGE") == NULL) {
+ 	/* Set CODEPAGE, CHARSET and KBDTYPE from the host codepage, with overrides from the environment. */
+@@ -530,11 +547,11 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+ 
+ 	    l = (ereq->group == TELOBJ_VAR)? &vars: &uservars;
+ 	    FOREACH_LLIST(l, value, environ_t *) {
+-		/* Add this value to the reply. */
+-		vb_appendf(&reply, "%c", ereq->group);
+-		vb_append(&reply, value->name, value->name_len);
+-		vb_appendf(&reply, "%c", TELOBJ_VALUE);
+-		vb_append(&reply, value->value, value->value_len);
++	 /* Add this value to the reply - ASCII only (Telnet protocol standard) */
++	 vb_appendf(&reply, "%c", ereq->group);
++	 vb_append(&reply, value->name, value->name_len);
++	 vb_appendf(&reply, "%c", TELOBJ_VALUE);
++	 vb_append(&reply, value->value, value->value_len);
+ 
+ 		/* Trace the reply. */
+ 		vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
+@@ -556,17 +573,17 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+ 		    (ereq->group == TELOBJ_VAR)? &vars : &uservars, ereq->name,
+ 		    ereq->name_len);
+ 
++	    /* Add variable name and value - ASCII only (Telnet protocol standard) */
+ 	    vb_appendf(&reply, "%c", ereq->group);
+ 	    vb_append(&reply, ereq->name, ereq->name_len);
+ 	    if (value != NULL) {
+-		vb_appendf(&reply, "%c", TELOBJ_VALUE);
+-		if (value->devname != NULL) {
+-		    dnext = devname_next(value->devname);
+-
+-		    vb_append(&reply, dnext, strlen(dnext));
+-		} else {
+-		    vb_append(&reply, value->value, value->value_len);
+-		}
++	 vb_appendf(&reply, "%c", TELOBJ_VALUE);
++	 if (value->devname != NULL) {
++	     dnext = devname_next(value->devname);
++	     vb_append(&reply, dnext, strlen(dnext));
++	 } else {
++	     vb_append(&reply, value->value, value->value_len);
++	 }
+ 	    }
+ 
+ 	    /* Trace the reply, */
+@@ -618,6 +635,128 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+     return true;
+ }
+ 
++/**
++ * Process NEW-ENVIRON INFO subnegotiation received from server.
++ * This handles z/OS sending us the ELF token.
++ *
++ * @param[in] buf Buffer containing NEW-ENVIRON data (after IAC SB NEW-ENVIRON INFO)
++ * @param[in] len Length of buffer
++ */
++void
++telnet_new_environ_recv(unsigned char *buf, size_t len)
++{
++    unsigned char *cp = buf;
++    unsigned char *end = buf + len;
++    
++    vtrace("ELF: Processing NEW-ENVIRON INFO from server (length=%zu)\n", len);
++    
++    while (cp < end) {
++ unsigned char cmd = *cp++;
++ 
++ if (cmd == TELOBJ_VAR || cmd == TELOBJ_USERVAR) {
++     /* Extract variable name */
++     char varname[256];
++     size_t name_len = 0;
++     bool escaped = false;
++     
++     while (cp < end && *cp != TELOBJ_VALUE && *cp != IAC) {
++  if (*cp == TELOBJ_ESC) {
++      escaped = true;
++      cp++;
++      if (cp >= end) break;
++  }
++  if (name_len < sizeof(varname) - 1) {
++      varname[name_len++] = *cp;
++  }
++  cp++;
++  escaped = false;
++     }
++     varname[name_len] = '\0';
++     
++     /* Check for VALUE marker */
++     if (cp < end && *cp == TELOBJ_VALUE) {
++  cp++;  /* Skip VALUE marker */
++  
++  /* Extract value (may include binary token data) */
++  unsigned char *value_start = cp;
++  size_t value_len = 0;
++  
++  escaped = false;
++  while (cp < end && *cp != IAC) {
++      if (*cp == TELOBJ_ESC) {
++   escaped = true;
++   cp++;
++   if (cp >= end) break;
++      }
++      value_len++;
++      cp++;
++      escaped = false;
++  }
++  
++  /* Check if this is IBMAPPLID with token */
++  if (strcmp(varname, IBMAPPLID_VARNAME) == 0 && value_len > 0) {
++      /* z/OS is sending us the ELF token! */
++      vtrace("ELF: Received IBMAPPLID from z/OS (length=%zu)\n", value_len);
++      
++      /* Free any previous token */
++      if (elf_token_received != NULL) {
++   memset(elf_token_received, 0, elf_token_length);
++   Free(elf_token_received);
++      }
++      
++      /* Store the complete token (APPLID + encrypted data) */
++      elf_token_received = Malloc(value_len + 1);
++      memcpy(elf_token_received, value_start, value_len);
++      elf_token_received[value_len] = '\0';
++      elf_token_length = value_len;
++      
++      vtrace("ELF: Token stored successfully\n");
++      vtrace("ELF: Token hex dump:\n");
++      for (size_t i = 0; i < value_len; i++) {
++   if (i % 16 == 0) vtrace("ELF:   ");
++   vtrace("%02x ", (unsigned char)elf_token_received[i]);
++   if ((i + 1) % 16 == 0 || i == value_len - 1) vtrace("\n");
++      }
++      
++      /* Update the stored IBMAPPLID value to use the token */
++      environ_t *e = find_environ(&uservars, IBMAPPLID_VARNAME,
++    		strlen(IBMAPPLID_VARNAME));
++      if (e != NULL) {
++   /* Replace the value with the token */
++   size_t token_xlen = escaped_len((const char *)elf_token_received,
++    		       elf_token_length);
++   char *new_value = Malloc(token_xlen);
++   escaped_copy(new_value, (const char *)elf_token_received,
++        elf_token_length);
++   e->value = new_value;
++   e->value_len = token_xlen;
++   vtrace("ELF: Updated IBMAPPLID uservar with token\n");
++      }
++  }
++     }
++ }
++    }
++}
++
++/**
++ * Clean up ELF token storage on disconnect.
++ */
++void
++telnet_new_environ_cleanup(void)
++{
++    if (elf_token_received != NULL) {
++ vtrace("ELF: Clearing stored token\n");
++ memset(elf_token_received, 0, elf_token_length);
++ Free(elf_token_received);
++ elf_token_received = NULL;
++ elf_token_length = 0;
++    }
++    if (elf_target_applid != NULL) {
++ Free(elf_target_applid);
++ elf_target_applid = NULL;
++    }
++}
++
+ /**
+  * Toggle a simple string.
+  * @param[in] name	Toggle name.
