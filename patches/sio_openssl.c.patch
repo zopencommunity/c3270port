@@ -1,6 +1,84 @@
---- a/suite3270-4.4/Common/sio_openssl.c
-+++ b/suite3270-4.4/Common/sio_openssl.c
-@@ -951,6 +951,15 @@ sio_negotiate(sio_t sio, socket_t sock, const char *hostname, bool *data)
+diff --git a/Common/sio_openssl.c b/Common/sio_openssl.c
+index bb87851..80e3440 100644
+--- a/Common/sio_openssl.c
++++ b/Common/sio_openssl.c
+@@ -892,6 +892,75 @@ display_server_subjects(varbuf_t *v, SSL *con)
+     sioc_subject_print(v, &subjects);
+ }
+ 
++/*
++ * OpenSSL message callback for detailed TLS debugging.
++ * This logs all TLS handshake messages to the trace file.
++ */
++static void
++tls_msg_callback(int write_p, int version, int content_type,
++                 const void *buf, size_t len, SSL *ssl, void *arg)
++{
++    const char *str_write_p = write_p ? ">>>" : "<<<";
++    const char *str_version;
++    const char *str_content_type = "";
++    const unsigned char *p = (const unsigned char *)buf;
++    
++    switch (version) {
++        case SSL3_VERSION: str_version = "SSL 3.0"; break;
++        case TLS1_VERSION: str_version = "TLS 1.0"; break;
++        case TLS1_1_VERSION: str_version = "TLS 1.1"; break;
++        case TLS1_2_VERSION: str_version = "TLS 1.2"; break;
++#if defined(TLS1_3_VERSION)
++        case TLS1_3_VERSION: str_version = "TLS 1.3"; break;
++#endif
++        default: str_version = "???"; break;
++    }
++    
++    if (version == SSL3_VERSION || version == TLS1_VERSION ||
++        version == TLS1_1_VERSION || version == TLS1_2_VERSION
++#if defined(TLS1_3_VERSION)
++        || version == TLS1_3_VERSION
++#endif
++        ) {
++        switch (content_type) {
++            case 20: str_content_type = "ChangeCipherSpec"; break;
++            case 21: str_content_type = "Alert"; break;
++            case 22: str_content_type = "Handshake"; break;
++            case 23: str_content_type = "ApplicationData"; break;
++            default: str_content_type = "???"; break;
++        }
++    }
++    
++    vtrace("TLS %s %s %s [length %04lx]\n",
++           str_write_p, str_version, str_content_type, (unsigned long)len);
++    
++    /* For handshake messages, log more details */
++    if (content_type == 22 && len > 0) {
++        vtrace("  Handshake type: %d", p[0]);
++        switch (p[0]) {
++            case 1: vtrace(" (ClientHello)\n"); break;
++            case 2: vtrace(" (ServerHello)\n"); break;
++            case 11:
++                vtrace(" (Certificate)\n");
++                vtrace("  >>> %s CERTIFICATE MESSAGE <<<\n",
++                       write_p ? "SENDING" : "RECEIVING");
++                /* Log certificate chain length */
++                if (len >= 7) {
++                    unsigned int certs_len = (p[4] << 16) | (p[5] << 8) | p[6];
++                    vtrace("  Certificate chain length: %u bytes\n", certs_len);
++                }
++                break;
++            case 12: vtrace(" (ServerKeyExchange)\n"); break;
++            case 13: vtrace(" (CertificateRequest)\n"); break;
++            case 14: vtrace(" (ServerHelloDone)\n"); break;
++            case 15: vtrace(" (CertificateVerify)\n"); break;
++            case 16: vtrace(" (ClientKeyExchange)\n"); break;
++            case 20: vtrace(" (Finished)\n"); break;
++            default: vtrace(" (Unknown)\n"); break;
++        }
++    }
++}
++
+ /*
+  * Negotiate an SSL connection.
+  * Returns true for success, false for failure.
+@@ -951,6 +1020,18 @@ sio_negotiate(sio_t sio, socket_t sock, const char *hostname, bool *data)
  	}
  #endif /*]*/
  
@@ -13,8 +91,9 @@
 +	    }
 +	}
 +
++	/* Enable detailed TLS message logging for debugging */
++	SSL_set_msg_callback(s->con, tls_msg_callback);
++
  	SSL_set_verify(s->con, SSL_VERIFY_PEER, ssl_verify_callback);
  
  	/* Set up the TLS/SSL connection. */
-
-# Made with Bob

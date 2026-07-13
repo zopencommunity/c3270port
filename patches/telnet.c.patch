@@ -1,5 +1,5 @@
 diff --git a/Common/telnet.c b/Common/telnet.c
-index 6b07b03..7a74b15 100644
+index 6b07b03..7871585 100644
 --- a/Common/telnet.c
 +++ b/Common/telnet.c
 @@ -246,6 +246,13 @@ static void net_hexnvt_out_framed(unsigned char *buf, size_t len, bool framed);
@@ -26,7 +26,7 @@ index 6b07b03..7a74b15 100644
      change_cstate(NOT_CONNECTED, "net_disconnect");
  }
  
-@@ -2044,41 +2054,47 @@ telnet_fsm(unsigned char c)
+@@ -2044,41 +2054,67 @@ telnet_fsm(unsigned char c)
  		    sbbuf[0] == TELOPT_STARTTLS) {
  		continue_tls(sbbuf, (int)(sbptr - sbbuf));
  	    } else if (sbbuf[0] == TELOPT_NEW_ENVIRON &&
@@ -100,16 +100,36 @@ index 6b07b03..7a74b15 100644
 +	     check_linemode(false);
 +	     deferred_will_ttype = false;
 +	 }
-+	    } else if (sbbuf[0] == TELOPT_NEW_ENVIRON &&
-+	     sbbuf[1] == TELQUAL_INFO && appres.new_environ) {
++	    } else if (sbbuf[0] == TELOPT_NEW_ENVIRON && appres.new_environ &&
++	     (sbbuf[1] == TELQUAL_INFO || sbbuf[1] == TELOBJ_USERVAR ||
++	      sbbuf[1] == TELOBJ_VAR)) {
 +	 /* Server is sending us environment variables (ELF token) */
-+	 vtrace("RCVD %s %s\n", opt(TELOPT_NEW_ENVIRON),
-+	        telquals[TELQUAL_INFO]);
-+	 telnet_new_environ_recv(sbbuf + 2, (sbptr - sbbuf - 3));
++	 /* z/OS may send USERVAR/VAR directly without INFO command byte */
++	 
++	 /* Enhanced debug logging */
++	 vtrace("RCVD %s subnegotiation, second byte=0x%02x, length=%zu\n",
++	        opt(TELOPT_NEW_ENVIRON), sbbuf[1], (sbptr - sbbuf));
++	 
++	 /* Hex dump for debugging */
++	 vtrace("  Hex dump: ");
++	 for (size_t i = 0; i < (sbptr - sbbuf) && i < 64; i++) {
++	     vtrace("%02x ", sbbuf[i]);
++	 }
++	 vtrace("\n");
++	 
++	 if (sbbuf[1] == TELQUAL_INFO) {
++	     /* RFC 1572 compliant format with INFO command byte */
++	     vtrace("  Format: RFC 1572 compliant (INFO command)\n");
++	     telnet_new_environ_recv(sbbuf + 2, (sbptr - sbbuf - 3));
++	 } else if (sbbuf[1] == TELOBJ_USERVAR || sbbuf[1] == TELOBJ_VAR) {
++	     /* z/OS format: starts directly with USERVAR/VAR (no command byte) */
++	     vtrace("  Format: z/OS style (direct USERVAR/VAR, no command byte)\n");
++	     telnet_new_environ_recv(sbbuf + 1, (sbptr - sbbuf - 2));
++	 }
  	    }
  
  	} else {
-@@ -2115,23 +2131,37 @@ tn3270e_request(void)
+@@ -2115,23 +2151,37 @@ tn3270e_request(void)
      char *tt_out;
      char *t;
      char *xtn;
@@ -153,7 +173,7 @@ index 6b07b03..7a74b15 100644
      }
  
      sprintf(t, "%c%c", IAC, SE);
-@@ -2140,10 +2170,10 @@ tn3270e_request(void)
+@@ -2140,10 +2190,10 @@ tn3270e_request(void)
      Free(tt_out);
  
      vtrace("SENT %s %s DEVICE-TYPE REQUEST %s%s%s %s\n",
