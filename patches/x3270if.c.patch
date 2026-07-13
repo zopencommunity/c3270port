@@ -10,5 +10,3 @@ index 405a147..e527b60 100644
  #endif /*]*/
  
  #if !defined(_WIN32) /*[*/
-
-# Made with Bob
