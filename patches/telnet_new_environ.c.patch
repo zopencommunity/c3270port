@@ -1,5 +1,5 @@
 diff --git a/Common/telnet_new_environ.c b/Common/telnet_new_environ.c
-index c3745aa..24e2899 100644
+index c3745aa..49fac71 100644
 --- a/Common/telnet_new_environ.c
 +++ b/Common/telnet_new_environ.c
 @@ -52,6 +52,7 @@
@@ -37,11 +37,11 @@ index c3745aa..24e2899 100644
 +    }
 +    
 +    if (ibmapplid != NULL && *ibmapplid != '\0') {
-+ /* ELF is enabled - save target APPLID and send empty value initially */
-+ /* This signals z/OS to generate and send us the token */
++ /* ELF is enabled - send "None" as IBMAPPLID sentinel value */
++ /* This matches PCOMM behavior and signals z/OS to generate a token */
 + Replace(elf_target_applid, NewString(ibmapplid));
-+ add_environ(&uservars, IBMAPPLID_VARNAME, "");  /* Empty string, not "None" */
-+ vtrace("ELF: Initial response IBMAPPLID=<empty> (target=%s, waiting for token from z/OS)\n",
++ add_environ(&uservars, IBMAPPLID_VARNAME, IBMAPPLID_NONE);
++ vtrace("ELF: Initial response IBMAPPLID=\"None\" (target=%s, waiting for token from z/OS)\n",
 +        ibmapplid);
 +    } else {
 + /* ELF not enabled */
