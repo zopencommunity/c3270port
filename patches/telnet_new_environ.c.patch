@@ -1,8 +1,16 @@
 diff --git a/Common/telnet_new_environ.c b/Common/telnet_new_environ.c
-index c3745aa..4083eb4 100644
+index c3745aa..24e2899 100644
 --- a/Common/telnet_new_environ.c
 +++ b/Common/telnet_new_environ.c
-@@ -79,6 +79,11 @@
+@@ -52,6 +52,7 @@
+ #include "utils.h"
+ #include "varbuf.h"
+ 
++#include "glue.h"
+ #include "telnet_new_environ.h"
+ 
+ #define ESCAPED(c)	\
+@@ -79,6 +80,11 @@
  /* Statics */
  static const char *telobjs[4] = { "VAR", "VALUE", "ESC", "USERVAR" };
  
@@ -14,7 +22,7 @@ index c3745aa..4083eb4 100644
  /* An environment variable. */
  typedef struct {
      llist_t list;
-@@ -237,12 +242,24 @@ environ_init(void)
+@@ -237,12 +243,24 @@ environ_init(void)
      /* Set IBMELF. */
      add_environ(&uservars, IBMELF_VARNAME, IBMELF_YES);
  
@@ -44,7 +52,7 @@ index c3745aa..4083eb4 100644
  
      if (ut_getenv("NO_CODEPAGE") == NULL) {
  	/* Set CODEPAGE, CHARSET and KBDTYPE from the host codepage, with overrides from the environment. */
-@@ -530,11 +547,11 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+@@ -530,11 +548,11 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
  
  	    l = (ereq->group == TELOBJ_VAR)? &vars: &uservars;
  	    FOREACH_LLIST(l, value, environ_t *) {
@@ -61,7 +69,7 @@ index c3745aa..4083eb4 100644
  
  		/* Trace the reply. */
  		vb_appendf(&trace_out, " %s \"%s\" %s \"%s\"",
-@@ -556,17 +573,17 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+@@ -556,17 +574,17 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
  		    (ereq->group == TELOBJ_VAR)? &vars : &uservars, ereq->name,
  		    ereq->name_len);
  
@@ -87,7 +95,7 @@ index c3745aa..4083eb4 100644
  	    }
  
  	    /* Trace the reply, */
-@@ -618,6 +635,128 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
+@@ -618,6 +636,130 @@ telnet_new_environ(unsigned char *request_buf, size_t request_buflen,
      return true;
  }
  
@@ -167,6 +175,8 @@ index c3745aa..4083eb4 100644
 +      elf_token_length = value_len;
 +      
 +      vtrace("ELF: Token stored successfully\n");
++      /* Notify task.c state machine that token is available */
++      elf_token_notify();
 +      vtrace("ELF: Token hex dump:\n");
 +      for (size_t i = 0; i < value_len; i++) {
 +   if (i % 16 == 0) vtrace("ELF:   ");

@@ -1,13 +1,14 @@
 diff --git a/include/glue.h b/include/glue.h
-index f05f33c..f249de6 100644
+index f05f33c..b02da70 100644
 --- a/include/glue.h
 +++ b/include/glue.h
-@@ -43,6 +43,9 @@ void parse_xrm(const char *arg, const char *where);
+@@ -43,6 +43,10 @@ void parse_xrm(const char *arg, const char *where);
  char *safe_string(const char *s);
  bool process_events(bool block);
  void cmdline_help(bool as_action);
 +void elf_init(void);
 +void elf_enable_processing(void);
++void elf_token_notify(void);
 +void send_elf_token(const char *token);
  void model_init(void);
  typedef bool merge_profile_t(void);
