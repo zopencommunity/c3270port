@@ -12,3 +12,4 @@ obsolete/
 .host.yaml
 .zoslib_hooks/*
 backup/
+CLAUDE.md
