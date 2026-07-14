@@ -1,0 +1,12 @@
+diff --git a/include/telnet.h b/include/telnet.h
+index 102d961..11c35d2 100644
+--- a/include/telnet.h
++++ b/include/telnet.h
+@@ -67,6 +67,7 @@ const char *net_query_lu_name(void);
+ const char *net_query_tls(void);
+ void net_sendc(char c);
+ void net_sends(const char *s);
++void net_send_timing_mark(void);
+ bool net_snap_options(void);
+ const char *tn3270e_current_opts(void);
+ const char *net_proxy_type(void);
