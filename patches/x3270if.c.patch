@@ -1,0 +1,15 @@
+diff --git a/Common/x3270if.c b/Common/x3270if.c
+index 405a147..1c1ffe4 100644
+--- a/Common/x3270if.c
++++ b/Common/x3270if.c
+@@ -88,7 +88,9 @@
+ #  endif /*]*/
+ # endif /*]*/
+ #endif
+-
++#ifdef __MVS__
++#include <termios.h>
++#endif
+ #include "base64.h"
+ #include "names.h"
+ #include "s3270_proto.h"
