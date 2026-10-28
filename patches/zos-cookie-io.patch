@@ -1,0 +1,154 @@
+diff --git a/Common/cookiefile.c b/Common/cookiefile.c
+index 01b420c..a2d2651 100644
+--- a/Common/cookiefile.c
++++ b/Common/cookiefile.c
+@@ -90,7 +90,7 @@ cookiefile_init(void)
+ 	ssize_t nr;
+ 
+ 	/* The file exists. Read the cookie from it. */
+-	fd = open(appres.cookie_file, O_RDONLY);
++	fd = cookiefile_open(appres.cookie_file, O_RDONLY, 0);
+ 	if (fd < 0) {
+ 	    perror(appres.cookie_file);
+ 	    goto fail;
+@@ -110,7 +110,7 @@ cookiefile_init(void)
+ 
+ 	    /* Re-open the file in write mode. */
+ 	    close(fd);
+-	    fd = open(appres.cookie_file, O_WRONLY | O_TRUNC);
++	    fd = cookiefile_open(appres.cookie_file, O_WRONLY | O_TRUNC, 0);
+ 	    if (fd < 0) {
+ 		perror(appres.cookie_file);
+ 		goto fail;
+@@ -145,9 +145,9 @@ cookiefile_init(void)
+ 
+ 	/* Create the file. */
+ #if !defined(_WIN32) /*[*/
+-	fd = open(appres.cookie_file, O_WRONLY | O_CREAT | O_EXCL, 0400);
++	fd = cookiefile_open(appres.cookie_file, O_WRONLY | O_CREAT | O_EXCL, 0400);
+ #else /*][*/
+-	fd = open(appres.cookie_file, O_WRONLY | O_CREAT | O_EXCL, S_IREAD);
++	fd = cookiefile_open(appres.cookie_file, O_WRONLY | O_CREAT | O_EXCL, S_IREAD);
+ #endif /*]*/
+ 	if (fd < 0) {
+ 	    perror(appres.cookie_file);
+diff --git a/Common/x3270if.c b/Common/x3270if.c
+index 405a147..3a8cd5a 100644
+--- a/Common/x3270if.c
++++ b/Common/x3270if.c
+@@ -92,4 +92,5 @@
+ #include "base64.h"
++#include "cookiefile.h"
+ #include "names.h"
+ #include "s3270_proto.h"
+ #include "w3misc.h"
+@@ -224,7 +225,7 @@ get_cookie(void)
+     if (cookiefile == NULL) {
+ 	return NULL;
+     }
+-    fd = open(cookiefile, O_RDONLY);
++    fd = cookiefile_open(cookiefile, O_RDONLY, 0);
+     if (fd < 0) {
+ 	return NULL;
+     }
+diff --git a/include/cookiefile.h b/include/cookiefile.h
+index 58876a2..e390938 100644
+--- a/include/cookiefile.h
++++ b/include/cookiefile.h
+@@ -30,4 +30,54 @@
+  *              Cookie file operations.
+  */
+ 
++#ifndef X3270_COOKIEFILE_H
++#define X3270_COOKIEFILE_H
++
++#include <errno.h>
++#include <fcntl.h>
++#include <unistd.h>
++#if defined(__MVS__) /*[*/
++# include <zos-io.h>
++#endif /*]*/
++
++/* Write protocol bytes; honor the encoding of existing tagged text files. */
++static inline int
++cookiefile_open(const char *filename, int flags, int mode)
++{
++    int fd = open(filename, flags, mode);
++
++#if defined(__MVS__) /*[*/
++    if (fd >= 0) {
++	int rc = __disableautocvt(fd);
++
++	if (rc >= 0 && (flags & O_ACCMODE) != O_RDONLY) {
++	    /* Generated cookies always contain ASCII protocol bytes. */
++	    rc = __setfdbinary(fd);
++	} else if (rc >= 0) {
++	    int tag = __getfdccsid(fd);
++	    unsigned short ccsid = tag & 0xffff;
++
++	    if (tag < 0) {
++		rc = -1;
++	    } else if ((tag & 0x10000) && ccsid != 819 && ccsid != 1208) {
++		/* Preserve tagged text, without changing the file's bytes or tag. */
++		struct f_cnvrt cvt = { SETCVTON, 819, (short)ccsid };
++
++		rc = fcntl(fd, F_CONTROL_CVT, &cvt);
++	    }
++	}
++	if (rc < 0) {
++	    int saved_errno = errno;
++
++	    close(fd);
++	    errno = saved_errno;
++	    return -1;
++	}
++    }
++#endif /*]*/
++    return fd;
++}
++
+ bool cookiefile_init(void);
++
++#endif /* X3270_COOKIEFILE_H */
+diff --git a/s3270/Test/testCookie.py b/s3270/Test/testCookie.py
+index fe526f3..c8c470f 100755
+--- a/s3270/Test/testCookie.py
++++ b/s3270/Test/testCookie.py
+@@ -72,6 +72,37 @@ def random_word(length: int) -> str:
+ @requests_timeout
+ class TestS3270Cookie(cti):
+ 
++    # Exercise both emulator and x3270if cookie reads, including a restart.
++    def test_s3270_x3270if_cookie_roundtrip(self):
++        for initial in (None, b'', b'Fixed-ASCII_cookie.123\n'):
++            with self.subTest(initial=initial), tempfile.TemporaryDirectory() as td:
++                path = os.path.join(td, 'cookie')
++                if initial is not None:
++                    with open(path, 'wb') as f:
++                        f.write(initial)
++                env = dict(os.environ, X3270COOKIEFILE=path, _BPXK_AUTOCVT='ON')
++                saved = None
++                for restart in range(2):
++                    port, ts = unused_port()
++                    s3270 = Popen(vgwrap(['s3270', '-scriptport', str(port),
++                        '-cookiefile', path]), stdin=DEVNULL, stdout=DEVNULL, env=env)
++                    self.children.append(s3270)
++                    ts.close()
++                    self.check_listen(port)
++                    with open(path, 'rb') as f:
++                        cookie = f.read()
++                    self.assertTrue(cookie)
++                    if saved is not None:
++                        self.assertEqual(saved, cookie)
++                    saved = cookie
++                    for command in ('Set(monoCase)', 'Quit()'):
++                        client = Popen(vgwrap(['x3270if', '-t', str(port), command]),
++                            stdout=PIPE, stderr=PIPE, env=env)
++                        self.children.append(client)
++                        stdout, stderr = client.communicate(timeout=5)
++                        self.assertEqual(0, client.returncode, stderr.decode())
++                    self.vgwait(s3270)
++
+     # s3270 s3270-mode cookie test
+     def test_s3270_s3270_cookie(self):
+ 
