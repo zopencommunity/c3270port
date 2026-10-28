@@ -48,6 +48,9 @@ EBCDIC space for trailing whitespace. It does not use the differing newline
 mappings to construct a 1047 fixture.
 
 All 20 checks passed on z/OS. `make -j4` completed for all configured binaries.
+`ZOPEN_INSTALL=skip zopen build -vv --no-set-active --no-install-deps` also
+completed successfully and reported 20/20 passing tests. Installation was
+disabled for this validation to preserve the installed package.
 The port's build now runs this suite and reports its actual failure and test
 counts; missing test results report a failure instead of a hardcoded success.
 The upstream patch also retains a portable x3270if round-trip test.
