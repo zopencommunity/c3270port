@@ -6,13 +6,16 @@ export ZOPEN_CATEGORIES="utilities"
 export ZOPEN_STABLE_URL="https://sourceforge.net/projects/x3270/files/x3270/${C3270_VERSION}/suite3270-${C3270_VERSION}-src.tgz"
 
 rm -f "suite3270-${C3270_VERSION}-src"
-ln -sfn "suite3270-${C3270_SVERSION}" "suite3270-${C3270_VERSION}-src"
+ln -s "suite3270-${C3270_SVERSION}" "suite3270-${C3270_VERSION}-src"
 export ZOPEN_BUILD_LINE="STABLE"
 export ZOPEN_NAME=c3270
 export ZOPEN_STABLE_DEPS="curl zoslib make ncurses coreutils openssl less check_python"
 export ZOPEN_COMP=CLANG
 #export ZOPEN_SRC_DIR=c3270
 export ZOPEN_MAKE_MINIMAL=yes
+export ZOPEN_CHECK=zopen_run_cookie_checks
+export ZOPEN_CHECK_MINIMAL=yes
+export ZOPEN_CHECK_OPTS="--source-dir ."
 export ZOPEN_INSTALL_MINIMAL=yes
 export ZOPEN_INSTALL_OPTS="-j\$ZOPEN_NUM_JOBS install install.man"
 export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-c3270 --enable-s3270 --enable-x3270if --with-ssl=yes"
@@ -24,11 +27,20 @@ zopen_check_results()
   pfx="$2"
   chk="$1/$2_check.log"
 
-  # Echo the following information to gauge build health
-  echo "actualFailures:0"
-  echo "totalTests:1"
-  echo "expectedFailures:0"
-  echo "expectedTotalTests:1"
+  if [ -f "$chk" ] && grep -q '^actualFailures:' "$chk"; then
+    sed -n -e '/^actualFailures:/p' -e '/^totalTests:/p' \
+      -e '/^expectedFailures:/p' -e '/^expectedTotalTests:/p' "$chk"
+  else
+    echo "actualFailures:1"
+    echo "totalTests:0"
+    echo "expectedFailures:0"
+    echo "expectedTotalTests:1"
+  fi
+}
+
+zopen_run_cookie_checks()
+{
+  python3 "${ZOPEN_ROOT}/testing/check-cookie-encoding.py" "$@"
 }
 
 zopen_append_to_env() {
